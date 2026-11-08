@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mendels Forschungslabor – Die Uniformitätsregel</title>
+<style>
+:root{--g:#245b45;--gl:#e6f0e8;--cr:#f7f5ec;--dk:#1f3329;--pu:#7654a5;--pl:#efe6f7;--go:#e0b64f}
+*{box-sizing:border-box}
+body{margin:0;font-family:"Trebuchet MS","Segoe UI",Arial,sans-serif;font-size:1.1rem;background:var(--cr);color:var(--dk);line-height:1.65}
+header{background:var(--g);color:#fff;padding:12px 4%;position:sticky;top:0;z-index:20}
+header strong{font-size:1.25rem}
+nav{display:flex;gap:6px;overflow-x:auto;padding:8px 0 2px;-webkit-overflow-scrolling:touch}
+nav button{flex:0 0 auto;background:transparent;border:1px solid #ffffff99;border-radius:22px;padding:10px 14px;min-height:46px;font-size:.95rem}
+nav button.on{background:#fff;color:var(--g);font-weight:bold}
+nav button.seen::after{content:" ✓"}
+button{cursor:pointer;font:inherit;border:0;border-radius:14px;padding:13px 20px;min-height:52px;background:var(--g);color:#fff;margin:5px;touch-action:manipulation}
+button:hover{filter:brightness(1.12)}
+button.sec{background:#dfe9e1;color:var(--dk)}
+button:focus,.pot:focus,.seedb:focus{outline:none}
+button:disabled{opacity:.45;cursor:not-allowed}
+main{max-width:1050px;margin:auto;padding:16px 16px 70px}
+.bar{height:10px;background:#d9e4db;border-radius:20px;overflow:hidden}
+#pb{height:100%;width:0;background:linear-gradient(90deg,#72a17b,var(--pu));transition:width .4s}
+section{display:none}
+section.active{display:block}
+h1{font-size:clamp(1.9rem,5vw,3rem);line-height:1.15;margin:.4em 0}
+h2{color:var(--g);margin-top:0}h3{color:var(--g);margin:.3em 0}
+.hero{background:linear-gradient(135deg,#dfecdf,#f1e9f6);padding:30px;border-radius:24px;margin:16px 0}
+.panel{background:#fff;padding:22px;border-radius:18px;margin:16px 0;box-shadow:0 3px 14px #1f332912}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
+.photo{width:100%;max-height:380px;object-fit:cover;border-radius:14px;background:#dfe9e1}
+.note{font-size:.88rem;color:#4d6457}
+.mendel{display:flex;gap:16px;align-items:center;background:var(--pl);border-radius:18px;padding:16px;margin:18px 0}
+.mendel img{width:100px;height:125px;object-fit:cover;object-position:center top;border-radius:12px;flex:none;background:#d9cce8}
+.mendel strong{color:var(--pu);display:block}
+.task{background:#fff6dd;border-left:6px solid #d4a84e;padding:16px;border-radius:10px;margin:16px 0}
+.task .paper{font-weight:bold;color:#7a5a12}
+.card{background:var(--gl);border-radius:14px;padding:14px 16px}
+.card b{font-size:1.5rem;display:block}
+.chip{display:inline-block;padding:2px 10px;border-radius:10px;font-weight:bold;background:#e9e1f3;color:var(--pu)}
+.fb{min-height:1.6em;font-weight:bold;margin:8px 0}
+.ok{color:#1d7a3e}.bad{color:#b0412e}
+.flowerbox svg{width:100%;max-width:300px;display:block;margin:auto;touch-action:manipulation}
+.p{cursor:pointer;transition:opacity .5s,transform .5s;transform-box:fill-box;transform-origin:center}
+.gone{opacity:0;transform:scale(.4) translateY(-30px);pointer-events:none}
+.st{transition:opacity .5s,transform .5s;transform-box:fill-box;transform-origin:center}
+[data-i]{cursor:pointer}
+.s2 .st{cursor:pointer;animation:pulse 1s infinite}
+@keyframes pulse{50%{transform:scale(1.25)}}
+.stage{position:relative;display:flex;flex-wrap:wrap;gap:12px;justify-content:space-around;background:#f2efe3;border-radius:18px;padding:14px 14px 90px;touch-action:none;user-select:none;-webkit-user-select:none}
+.stage .fl{flex:1 1 220px;text-align:center}
+#brush{position:absolute;font-size:3rem;cursor:grab;touch-action:none;z-index:5;line-height:1;padding:8px}
+#brush.ld::after{content:"";position:absolute;left:6px;bottom:8px;width:16px;height:16px;border-radius:50%;background:var(--go);box-shadow:0 0 8px var(--go)}
+.pod{height:54px;width:70px;background:#8fbf7f;border-radius:30px;display:flex;align-items:center;justify-content:space-around;padding:0 14px;transition:width 3s;overflow:hidden;border:3px solid #5f9a55;margin:12px 0}
+.pod.big{width:100%}
+.pod i{width:30px;height:30px;border-radius:50%;background:#d3ec9a;border:2px solid #85a944;transform:scale(0);transition:transform 1s 2s}
+.pod.big i{transform:scale(1)}
+.pots{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin:14px 0}
+.pot{width:110px;height:120px;background:#b9825a;border-radius:6px 6px 26px 26px;display:flex;align-items:center;justify-content:center;font-size:2rem;cursor:pointer;border:3px solid #8d5e3d;text-align:center;line-height:1.1}
+.pot.sel{box-shadow:0 0 0 4px var(--go)}
+.seedb{width:56px;height:56px;border-radius:50%;background:#d3ec9a;border:3px solid #85a944;padding:0;margin:8px}
+.seedb.sel{box-shadow:0 0 0 5px var(--go)}.seedb.used{opacity:.25}
+.tube{stroke:var(--go);stroke-width:4;fill:none;stroke-dasharray:200;stroke-dashoffset:200}
+.tube.go{animation:tb 3s forwards}@keyframes tb{to{stroke-dashoffset:0}}
+.chrom{display:flex;gap:30px;justify-content:center;align-items:flex-end;margin:10px 0}
+.pg{display:grid;grid-template-columns:repeat(3,minmax(70px,1fr));gap:6px;max-width:420px;margin:10px auto;text-align:center}
+.pg div{padding:14px 4px;border-radius:12px;background:#f0ece4;font-weight:bold;min-height:64px;font-size:1.15rem}
+.pg .h{background:#e6f0e8}.pg .v{background:#e4d6f3}.pg .w{background:#f5f5f5;border:2px dashed #bbb}
+.cmp{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px}
+.cmp>div{border-radius:14px;padding:14px;text-align:center}
+.vi{background:#e4d6f3}.wh{background:#fff;border:2px solid #ddd}.mx{background:#d0b8ea}
+.q{background:var(--gl);border-radius:14px;padding:14px;margin:12px 0}
+.q button{background:#fff;color:var(--dk);border:2px solid #b8c8bc}
+.pg button{margin:0;width:100%;min-height:64px;background:#f0ece4;color:var(--dk);font-weight:bold;font-size:1.15rem;border:2px dashed #b8c8bc}.pg button.f{border-style:solid;background:#e6f0e8}
+.gap{min-width:120px;min-height:44px;margin:2px 4px;padding:4px 12px;background:#fff;color:var(--dk);border:2px dashed #8aa395;font-weight:bold}.gap.f{border-style:solid;background:#e4d6f3}.gap.ok{border:2px solid #1d7a3e;background:#dff3e5}.gap.no{border:2px solid #b0412e;background:#fbe3dd}.wd{background:#fff;color:var(--dk);border:2px solid var(--pu)}.wd.sel{background:var(--pu);color:#fff}.wd.used{opacity:.25;pointer-events:none}
+.tip{background:#e6f3fa;border-left:6px solid #4f9cc4;padding:12px 16px;border-radius:10px;margin:14px 0}.nopic{background:#eef2ee;border:2px dashed #9db3a4;border-radius:14px;padding:16px;text-align:center}
+footer{background:var(--g);color:#fff;text-align:center;padding:24px 16px}
+footer .note{color:#fff}
+@media(max-width:600px){.hero{padding:20px}.mendel img{width:80px;height:105px}.mendel{align-items:flex-start}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media print{header,footer,button{display:none}section{display:block!important}}
+</style>
+<script>function imgFB(i){var a=(i.dataset.alt||"").split("|").filter(Boolean);if(a.length){i.src=a.shift();i.dataset.alt=a.join("|")}else{i.style.display="none";var n=i.nextElementSibling;if(n)n.hidden=false}}
+/* ---------- Zuordnung Merkmal ---------- */
+const ZR=["Augenfarbe","braune Augen","blaue Augen","Blütenfarbe","lila Blüten","weiße Blüten"],ZA={"Augenfarbe":"M","Blütenfarbe":"M","braune Augen":"A","blaue Augen":"A","lila Blüten":"A","weiße Blüten":"A"};
+let zlk=null,zrk=null,zcon={},zst={};
+function zDraw(){const bx=$("#zbox").getBoundingClientRect();let h="";
+ for(const w in zcon){const L=$('#zl [data-t="'+zcon[w]+'"]').getBoundingClientRect(),R=$('#zrt [data-w="'+w+'"]').getBoundingClientRect(),c=zst[w]==="ok"?"#1d7a3e":zst[w]==="no"?"#b0412e":"#7654a5";
+  h+=`<line x1="${L.right-bx.left}" y1="${L.top+L.height/2-bx.top}" x2="${R.left-bx.left}" y2="${R.top+R.height/2-bx.top}" stroke="${c}" stroke-width="4" stroke-linecap="round"/>`}
+ $("#zsv").innerHTML=h}
+function zInit(){zlk=zrk=null;zcon={};zst={};$("#zf").textContent="";
+ $("#zrt").innerHTML=[...ZR].sort(()=>Math.random()-.5).map(w=>`<button class="wd" data-w="${w}">${w}</button>`).join("");
+ $$("#zl .wd").forEach(b=>b.classList.remove("sel"));zDraw()}
+function zLink(){const w=zrk,t=zlk;zcon[w]=t;delete zst[w];zlk=zrk=null;$$("#zbox .wd").forEach(b=>b.classList.remove("sel"));$("#zf").textContent="";zDraw()}
+$("#zbox").addEventListener("click",e=>{const b=e.target.closest(".wd");if(!b)return;
+ if(b.dataset.t){zlk=b.dataset.t;$$("#zl .wd").forEach(x=>x.classList.toggle("sel",x===b));if(zrk)zLink()}
+ else{const w=b.dataset.w;
+  if(zcon[w]&&!zlk){delete zcon[w];delete zst[w];zDraw();return}
+  zrk=w;$$("#zrt .wd").forEach(x=>x.classList.toggle("sel",x===b));if(zlk)zLink()}});
+$("#zc").onclick=()=>{let ok=0,miss=0;ZR.forEach(w=>{if(!zcon[w]){miss++;return}const r=zcon[w]===ZA[w];zst[w]=r?"ok":"no";if(r)ok++});zDraw();
+ const f=$("#zf");f.className="fb "+(ok===6?"ok":"bad");
+ f.textContent=ok===6?"🎉 Alles richtig! Augenfarbe und Blütenfarbe sind Merkmale, braune Augen, lila Blüten usw. sind Merkmalsausprägungen.":(miss?miss+" Begriff(e) sind noch nicht verbunden. ":"")+ok+" von 6 richtig. Rote Linien sind falsch: Ein Merkmal ist die Eigenschaft, eine Ausprägung ist die konkrete Variante."};
+$("#zrs").onclick=zInit;zInit();window.addEventListener("resize",()=>{try{zDraw()}catch(e){}});
+quiz($("#qM"),[["Was ist „blaue Augen“?",["Ein Merkmal","Eine Merkmalsausprägung","Ein Gen"],1,"Das Merkmal ist die Augenfarbe, „blaue Augen“ ist eine Ausprägung davon."],["Was ist „Blütenfarbe“?",["Ein Merkmal","Eine Merkmalsausprägung","Ein Allel"],0,"Lila und weiß sind die Ausprägungen."]]);
+</script>
+</head>
+<body>
+<header>
+  <strong>🔬 Mendels Forschungslabor</strong>
+  <nav id="nav" aria-label="Lernabschnitte"></nav>
+</header>
+<main>
+<div class="bar" aria-hidden="true"><div id="pb"></div></div>
+<p class="note" id="pt" aria-live="polite">Dein Fortschritt: 0 %</p>
+
+<!-- 1 START -->
+<section id="start" class="active">
+ <div class="hero">
+  <h1>🧬 Das Geheimnis der Erbsen</h1>
+  <h2>Was wir schon wissen …</h2>
+  <p><b>🧩 Lückentext:</b> Tippe ein Wort in der Wortbank an und dann die passende Lücke. Tippe auf ein eingesetztes Wort, um es wieder zu entfernen.</p>
+  <div id="wb" style="text-align:center" aria-label="Wortbank"></div>
+  <div class="panel" id="lt" style="line-height:2.3">
+   <p>🧪 Die <button class="gap" data-a="DNA"></button> speichert die Erbinformation in der Abfolge der <button class="gap" data-a="Basen"></button>. Ein <button class="gap" data-a="Gen"></button> ist ein Abschnitt der DNA.</p>
+   <p>🥚 Aus einer befruchteten <button class="gap" data-a="Eizelle"></button> entsteht durch <button class="gap" data-a="Mitose"></button> und Differenzierung ein ganzer Mensch. Alle Körperzellen enthalten dieselbe DNA.</p>
+   <p>🧶 Körperzellen sind <button class="gap" data-a="diploid"></button>: Sie haben zwei Chromosomensätze, einen von der Mutter, einen vom Vater. Keimzellen sind <button class="gap" data-a="haploid"></button> und haben nur einen Satz.</p>
+   <p>🔀 Bei der <button class="gap" data-a="Meiose"></button> werden die Chromosomen zufällig verteilt. So entstehen genetisch verschiedene Keimzellen und damit <button class="gap" data-a="Variabilität"></button>.</p>
+  </div>
+  <button id="ltc">✔ Prüfen</button><button class="sec" id="ltr">↺ Neu beginnen</button>
+  <p class="fb" id="ltf" aria-live="polite"></p>
+  <p>🤔 Das erklärt, warum Geschwister verschieden sind. Aber <b>wie</b> werden einzelne Merkmale weitergegeben? Gibt es Regeln? Genau das hat Gregor Mendel untersucht – und zwar noch <b>ohne</b> DNA, Chromosomen oder Meiose zu kennen!</p>
+ </div>
+ <div class="mendel">
+  <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Gregor_Mendel.png" alt="Historisches Porträt von Gregor Mendel">
+  <div><strong>👨‍🔬 Gregor Mendel – Forschungsleiter</strong>„Willkommen in meinem Labor! Im 19. Jahrhundert habe ich als Mönch in Brünn Erbsenpflanzen gekreuzt und genau beobachtet, was bei den Nachkommen herauskommt. Heute forschst du an meiner Stelle!“</div>
+ </div>
+ <div class="task" style="border-left-color:var(--pu);background:#f4ecfb">🔬 <b>Unsere Forschungsfrage:</b><br>Bei der Meiose entsteht zufällige Vielfalt. Wie sehen dann die Nachkommen aus, wenn man zwei <b>reinerbige</b> Erbsenpflanzen kreuzt, eine mit violetten und eine mit weißen Blüten? Welche <b>Blütenfarbe</b> und welche <b>Allelkombination</b> haben sie – gibt es Vielfalt oder sind alle gleich?<br><span class="paper">📝 Notiere deine Vermutung auf deinem Papier-Arbeitsblatt.</span></div>
+ <div class="panel"><h2>🎯 Dein Forschungsauftrag</h2>
+  <ol><li>Lerne die Erbsenpflanze kennen 🌱</li><li>Erforsche den Aufbau der Blüte 🌸</li><li>Verstehe die Bestäubung 🐝</li><li>Lerne Gene, Allele, Genotyp und Phänotyp kennen 🧬</li><li>Führe selbst eine Kreuzung durch 🖌️</li><li>Erstelle ein Kreuzungsschema 🧩</li><li>Entdecke die Regel 🏆 und übe selbst 🎯</li></ol></div>
+ <div class="tip">💡 <b>Tipp:</b> Lies die Wiederholung und löse den Lückentext. Halte dein Papier-Arbeitsblatt bereit.</div>
+ <button data-go="plant">🧪 Forschung starten</button>
+</section>
+
+<!-- 2 PFLANZE -->
+<section id="plant">
+ <h1>🌱 Das Forschungsobjekt</h1>
+ <div class="tip">💡 <b>Tipp:</b> Schau dir die Fotos genau an: Welche Merkmale kannst du erkennen?</div>
+ <div class="panel">
+  <img class="photo" src="erbsenpflanze.jpg" data-alt="https://commons.wikimedia.org/wiki/Special:FilePath/Pisum_sativum_MHNT.BOT.2010.12.9.jpg?width=900|https://commons.wikimedia.org/wiki/Special:FilePath/Pisum_sativum_J1.JPG?width=900" onerror="imgFB(this)" alt="Erbsenpflanze mit Blüten und Hülsen"><div class="nopic" hidden>🖼️ Foto nicht geladen. Lege die Datei „erbsenpflanze.jpg“ in denselben Ordner wie die index.html.</div>
+  <p class="note">Erbsenpflanze (Pisum sativum). Foto: Wikimedia Commons.</p>
+  <p>Das ist eine ganze <b>Erbsenpflanze</b>. Mendel zog tausende davon heran. Warum gerade Erbsen?</p>
+  <div class="grid">
+   <div class="card"><b>🌿</b>Sie sind relativ einfach anzubauen.</div>
+   <div class="card"><b>🔎</b>Sie besitzen gut erkennbare Merkmale.</div>
+   <div class="card"><b>🫛</b>Sie bilden viele Samen.</div>
+   <div class="card"><b>⚡</b>Sie erzeugen in kurzer Zeit viele Nachkommen.</div>
+   <div class="card"><b>🖌️</b>Ihre Bestäubung lässt sich kontrollieren.</div>
+   <div class="card"><b>🎨</b>Es gibt verschiedene Merkmalsausprägungen, z. B. lila und weiße Blüten.</div>
+  </div>
+ </div>
+ <div class="panel"><h2>🎨 Lila und weiße Erbsenblüten</h2>
+  <img class="photo" src="erbsen-lila-weiss.jpg" onerror="imgFB(this)" alt="Erbsenpflanzen mit lila und weißen Blüten"><div class="nopic flowerbox" id="pw" hidden></div>
+  <p>Es gibt sowohl <b>lila</b> als auch <b>weiße</b> Erbsenblüten. Die Blütenfarbe ist ein <b>Merkmal</b>, „lila“ und „weiß“ sind zwei <b>Merkmalsausprägungen</b>. Genau diese beiden Ausprägungen hat Mendel miteinander gekreuzt.</p>
+ </div>
+ <div class="task">❓ Warum ist es für einen Versuch sinnvoll, Pflanzen mit gut unterscheidbaren Merkmalen zu verwenden?<br><span class="paper">📝 Notiere deine Antwort auf deinem Papier-Arbeitsblatt.</span></div>
+ <button data-go="flower">Weiter zum Blütenaufbau →</button>
+</section>
+
+<!-- 3 BLÜTE -->
+<section id="flower">
+ <h1>🌸 Der Aufbau der Erbsenblüte</h1>
+ <div class="tip">💡 <b>Tipp:</b> Tippe die Blütenblätter nacheinander an. Danach kannst du die inneren Blütenorgane antippen und mehr erfahren.</div>
+ <div class="panel"><img class="photo" src="erbsenbluete.jpg" data-alt="" onerror="imgFB(this)" alt="Nahaufnahme einer Erbsenblüte"><div class="nopic" hidden>🖼️ Foto nicht geladen. Lege die Datei „erbsenbluete.jpg“ in denselben Ordner wie die index.html.</div><p class="note">Foto einer Erbsenblüte: Pixabay (Pixabay-Lizenz).</p></div>
+ <div class="panel">
+  <p>Eine Erbsenblüte hat <b>drei Arten von Blütenblättern</b>: die große <b>Fahne</b> 🚩 (hinten, groß und herzförmig), zwei <b>Flügel</b> 🪽 (vorn in der Mitte) und das <b>Schiffchen</b> ⛵ (dahinter, nur unten sichtbar), das die inneren Blütenorgane umschließt. <b>Tippe die Blütenblätter an, um sie zu entfernen!</b></p>
+  <div class="flowerbox" id="fmain"></div>
+  <p class="fb" id="finfo" aria-live="polite">Tippe auf ein Blütenblatt.</p>
+  <button class="sec" id="fres">↺ Zurücksetzen</button>
+ </div>
+ <div class="grid">
+  <div class="card"><b>🟡 Staubblätter</b>Die Staubblätter sind die <b>männlichen Blütenorgane</b>. Sie bilden den <b>Pollen</b>, der die männlichen Keimzellen enthält. (Die Zeichnung zeigt vereinfacht 4 Staubblätter, die Erbse hat 10.)</div>
+  <div class="card"><b>🟢 Stempel</b>Das <b>weibliche Blütenorgan</b> aus <b>Narbe</b>, Griffel und <b>Fruchtknoten</b>. Auf der Narbe kann Pollen landen.</div>
+  <div class="card"><b>⚪ Samenanlagen</b>Im Fruchtknoten liegen die Samenanlagen mit den Eizellen. Nach der Befruchtung werden daraus <b>Samen</b>.</div>
+ </div>
+ <div class="panel"><p>✅ Die Erbsenblüte besitzt männliche <b>und</b> weibliche Blütenorgane. Sie liegen eng zusammen im Schiffchen. Deshalb bestäubt sich die Erbse <b>normalerweise selbst</b>.</p></div>
+ <div class="task">❓ Warum kann sich eine Erbsenblüte selbst bestäuben?<br><span class="paper">📝 Notiere deine Antwort auf deinem Papier-Arbeitsblatt.</span></div>
+ <button data-go="pollen">Weiter zur Bestäubung →</button>
+</section>
+
+<!-- 4 BESTÄUBUNG -->
+<section id="pollen">
+ <h1>🐝 Bestäubung bei der Erbse</h1>
+ <div class="tip">💡 <b>Tipp:</b> Merke dir die Wörter Selbst- und Fremdbestäubung. Du brauchst sie gleich wieder.</div>
+ <div class="panel">
+  <h3>Was ist Bestäubung?</h3>
+  <p>Bei der <b>Bestäubung</b> gelangt Pollen auf die Narbe eines Stempels.</p>
+  <div class="grid">
+   <div class="card"><b>🔁 Selbstbestäubung</b>Der Pollen stammt aus <b>derselben Blüte</b> (oder derselben Pflanze). Das ist bei Erbsen <b>der Normalfall</b>, weil die Blüte geschlossen bleibt und Staubblätter und Narbe dicht beieinander liegen.</div>
+   <div class="card"><b>🔀 Fremdbestäubung</b>Pollen von <b>einer anderen Pflanze</b> gelangt auf die Narbe. Bei der Erbse ist das selten, aber möglich.</div>
+  </div>
+ </div>
+ <div class="panel"><h3>🧐 Warum ist das für Mendels Versuche wichtig?</h3>
+  <p>Mendel wollte <b>genau bestimmen</b>, welche zwei Pflanzen Nachkommen bekommen. Würde sich die Empfängerblüte selbst bestäuben oder fremden Pollen bekommen, wäre das Ergebnis nicht mehr eindeutig.</p>
+  <p>Deshalb musste er die Bestäubung <b>kontrollieren</b>: Er öffnete die Blüte früh, entfernte die Staubblätter und übertrug dann mit einem Pinsel gezielt Pollen einer anderen Pflanze. Das nennt man <b>künstliche Bestäubung</b>. <b>Mendel ist bei seinen Kreuzungsversuchen genau so vorgegangen.</b></p>
+  <p>👉 Genau das machst du jetzt im Kreuzungsspiel!</p></div>
+ <div class="task">❓ Warum muss man bei einem Kreuzungsversuch verhindern, dass sich die Empfängerblüte selbst bestäubt?<br><span class="paper">📝 Notiere deine Antwort auf deinem Papier-Arbeitsblatt.</span></div>
+ <button data-go="genes1">Weiter zu Genen und Allelen →</button>
+</section>
+
+<!-- 6 GENETIK -->
+<section id="genes1">
+ <h1>🧬 Merkmale, Gene und Allele</h1>
+ <div class="tip">💡 <b>Tipp:</b> Eselsbrücke: Ein Gen ist wie ein Rezept, die Allele sind verschiedene Versionen dieses Rezepts.</div>
+ <div class="panel"><h3>1. Merkmal und Merkmalsausprägung</h3>
+  <p><span class="chip">Merkmal</span> Eine Eigenschaft eines Lebewesens, die man beschreiben kann, z. B. die <b>Blütenfarbe</b> einer Erbse oder die Augenfarbe eines Menschen.</p>
+  <p><span class="chip">Merkmalsausprägung</span> Die konkrete Variante eines Merkmals. Beim Merkmal Blütenfarbe gibt es bei Erbsen die Ausprägungen <b>lila</b> und <b>weiß</b>.</p>
+  <div class="grid"><div class="card"><b>🎨 Blütenfarbe</b>lila · weiß</div><div class="card"><b>⚪ Samenform</b>rund · runzelig</div><div class="card"><b>🟡 Samenfarbe</b>gelb · grün</div><div class="card"><b>📏 Wuchshöhe</b>hoch · niedrig</div></div></div>
+ <div class="panel" id="zp"><h3>🧩 Zuordnung: Verbinde die Begriffe</h3>
+  <p>Verbinde jeden Begriff rechts mit dem passenden Fachbegriff links. Tippe zuerst einen Fachbegriff links an und dann einen Begriff rechts. Tippe auf einen verbundenen Begriff rechts, um die Linie zu löschen.</p>
+  <div id="zbox" style="position:relative;padding:6px 0">
+   <svg id="zsv" style="position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none" aria-hidden="true"></svg>
+   <div style="display:flex;justify-content:space-between;gap:70px;align-items:stretch">
+    <div id="zl" style="display:flex;flex-direction:column;justify-content:space-around;gap:20px"><button class="wd" data-t="M">Merkmal</button><button class="wd" data-t="A">Merkmalsausprägung</button></div>
+    <div id="zrt" style="display:flex;flex-direction:column;gap:12px"></div>
+   </div></div>
+  <button id="zc">✔ Prüfen</button><button class="sec" id="zrs">↺ Neu beginnen</button>
+  <p class="fb" id="zf" aria-live="polite"></p>
+  <div class="q" id="qM"></div></div>
+ <div class="panel"><h3>2. Gen, Genort und Allele</h3>
+  <p><span class="chip">Gen</span> Ein DNA-Abschnitt, der an der Ausprägung eines Merkmals beteiligt ist, z. B. der Blütenfarbe.</p>
+  <p><span class="chip">Genort (Locus)</span> Die Stelle auf einem Chromosom, an der das Gen liegt.</p>
+  <p><span class="chip">Allele</span> Verschiedene Varianten eines Gens. In unserem vereinfachten Modell gibt es für die Blütenfarbe ein Allel für „lila“ und ein Allel für „weiß“.</p>
+  <p>Erbsen sind <b>diploid</b>: Sie haben jedes Chromosom <b>zweimal</b> – eins von der Mutter, eins vom Vater. Für das Gen der Blütenfarbe besitzen sie deshalb <b>zwei Allele</b>.</p>
+  <div class="chrom" role="img" aria-label="Zwei Chromosomen mit je einem Allel am gleichen Genort">
+   <svg viewBox="0 0 70 190" width="70"><rect x="20" y="5" width="30" height="180" rx="15" fill="#d8d0c0"/><rect x="20" y="70" width="30" height="22" fill="#7654a5"/><text x="35" y="86" font-size="16" fill="#fff" text-anchor="middle">V</text></svg>
+   <svg viewBox="0 0 70 190" width="70"><rect x="20" y="5" width="30" height="180" rx="15" fill="#d8d0c0"/><rect x="20" y="70" width="30" height="22" fill="#fff" stroke="#999"/><text x="35" y="86" font-size="16" fill="#333" text-anchor="middle">v</text></svg>
+   <div class="note" style="max-width:220px">⬅ Beide Chromosomen tragen am gleichen Genort ein Allel für die Blütenfarbe (Beispiel: links V, rechts v).</div></div></div>
+ <button data-go="genes2">Weiter: Genotyp und Phänotyp →</button>
+</section>
+
+<section id="genes2">
+ <h1>🔎 Genotyp und Phänotyp</h1>
+ <div class="tip">💡 <b>Tipp:</b> Merke: Den Genotyp kann man nicht sehen, den Phänotyp schon.</div>
+ <div class="panel">
+  <p><span class="chip">Genotyp</span> Die Allelkombination eines Lebewesens, z. B. <b>Vv</b>.</p>
+  <p><span class="chip">Phänotyp</span> Alle sichtbaren oder messbaren Merkmale, z. B. <b>lila Blüten</b>. Er entsteht aus dem Genotyp <b>und</b> der Umwelt:</p>
+  <p style="text-align:center;font-size:1.25rem"><b>Genotyp + Umwelt ➜ Phänotyp</b></p>
+  <div class="grid">
+   <div class="card"><b>🟣 Gleicher Phänotyp, anderer Genotyp</b>Erbsen mit dem Genotyp VV und Vv blühen beide lila. Von außen sieht man den Genotyp nicht.</div>
+   <div class="card"><b>👯 Gleicher Genotyp, anderer Phänotyp</b>Eineiige Zwillinge entstehen aus <b>einer</b> befruchteten Eizelle und haben dieselbe DNA. Trotzdem unterscheiden sie sich leicht, z. B. in Gewicht, Narben oder Frisur. Ernährung, Sport, Sonne und Zufälle (Umwelt) prägen den Phänotyp. Auch genetisch gleiche Erbsen werden im Schatten kleiner als in der Sonne.</div>
+   <div class="card"><b>👫 Geschwister mit anderem Phänotyp</b>Du hast blaue Augen, deine Schwester braune? Durch die zufällige Verteilung bei der Meiose und die zufällige Befruchtung haben Geschwister <b>unterschiedliche Genotypen</b>. Jedes Kind erhält von den Eltern eine andere Auswahl an Allelen.</div></div>
+  <p class="note">⚠️ Die Augenfarbe wird von mehreren Genen beeinflusst und ist kein einfaches Beispiel. Das Prinzip „andere Allelkombination ➜ anderer Phänotyp“ gilt aber auch hier.</p></div>
+ <div class="task">❓ Erkläre, warum eineiige Zwillinge trotz gleichem Genotyp nicht völlig gleich aussehen müssen.<br><span class="paper">📝 Notiere deine Antwort auf deinem Papier-Arbeitsblatt.</span></div>
+ <div class="q" id="qG0"></div>
+ <button data-go="genes3">Weiter: VV, Vv und vv →</button>
+</section>
+
+<section id="genes3">
+ <h1>🎨 VV, Vv und vv bei Erbsen</h1>
+ <div class="tip">💡 <b>Tipp:</b> Großbuchstabe = dominantes Allel, Kleinbuchstabe = rezessives Allel. Eine weiße Blüte hat immer vv.</div>
+ <div class="panel"><h3>1. Reinerbig und mischerbig</h3>
+  <div class="cmp">
+   <div class="vi"><b style="font-size:1.6rem">VV 🟣🟣</b><br>homozygot (reinerbig)<br>beide Allele gleich</div>
+   <div class="wh"><b style="font-size:1.6rem">vv ⚪⚪</b><br>homozygot (reinerbig)<br>beide Allele gleich</div>
+   <div class="mx"><b style="font-size:1.6rem">Vv 🟣⚪</b><br>heterozygot (mischerbig)<br>Allele verschieden</div></div></div>
+ <div class="panel"><h3>2. Dominant und rezessiv</h3>
+  <p>Im <b>vereinfachten Modell</b> der Erbsenblütenfarbe gilt: <b>V</b> ist das Allel für <b>lila</b> und <b>dominant</b>, <b>v</b> ist das Allel für <b>weiß</b> und <b>rezessiv</b>. Ein dominantes Allel setzt sich im Phänotyp durch. Ein rezessives Allel zeigt sich nur, wenn es doppelt vorliegt.</p>
+  <div class="pg" style="grid-template-columns:repeat(3,1fr)"><div><small>Genotyp</small></div><div><small>Phänotyp</small></div><div><small>Warum?</small></div>
+   <div class="v">VV</div><div class="v">🟣 lila</div><div class="v">V ist dominant</div>
+   <div class="v">Vv</div><div class="v">🟣 lila</div><div class="v">V überdeckt v</div>
+   <div class="w">vv</div><div>⚪ weiß</div><div class="w">nur v vorhanden</div></div>
+  <div class="card" style="background:#fff6dd">👉 <b>Wichtig:</b> Eine <b>weiße</b> Erbsenblüte hat immer den Genotyp <b>vv</b>. Eine reinerbig <b>lila</b> Erbsenblüte hat den Genotyp <b>VV</b>. Genau diese beiden Pflanzen kreuzen wir gleich.</div>
+  <p class="note">⚠️ Das ist ein Modell für die Erbsenblütenfarbe. Die meisten Merkmale des Menschen werden nicht so einfach vererbt.</p></div>
+ <div class="q" id="qG"></div>
+ <button data-go="game">Weiter zum Kreuzungsspiel →</button>
+</section>
+
+<!-- 5 SPIEL -->
+<section id="game">
+ <h1>🖌️ Das Kreuzungsspiel</h1>
+ <div class="tip">💡 <b>Tipp:</b> Gehe langsam vor: Entferne zuerst alle Blütenblätter beider Blüten. Den Pinsel ziehst du mit dem Finger.</div>
+ <div class="task" style="border-left-color:var(--pu);background:#f4ecfb">🔬 <b>Forschungsfrage:</b> Du kreuzt gleich eine reinerbige weiße Erbse (vv) mit einer reinerbigen lila Erbse (VV). Welchen <b>Genotyp</b> und welche <b>Blütenfarbe</b> erwartest du bei den Nachkommen?<br><span class="paper">📝 Notiere deine Vermutung auf deinem Papier-Arbeitsblatt.</span></div>
+ <div class="panel">
+  <div class="card" style="margin-bottom:10px">👨‍🔬 <b>Auch Mendel ist bei seinen Kreuzungsversuchen genau so vorgegangen.</b> Jetzt bist du dran!<br>📘 <b>P-Generation</b> = Elterngeneration (hier: die lila und die weiße Erbse). <b>F<sub>1</sub>-Generation</b> = erste Tochtergeneration, also die Nachkommen, die aus den Samen wachsen.</div>
+  <p class="fb" id="ginfo" aria-live="polite" style="font-size:1.15rem"></p>
+  <div class="stage" id="stage">
+   <div class="fl"><b>🤍 Empfängerblüte (weiß, vv)</b><div class="flowerbox" id="grec"></div></div>
+   <div class="fl"><b>🟣 Pollenquelle (lila, VV)</b><div class="flowerbox" id="gdon"></div></div>
+   <div id="brush" role="img" aria-label="Pinsel">🖌️</div>
+  </div>
+  <button class="sec" id="gres">↺ Spiel neu starten</button>
+ </div>
+ <div id="g2" hidden>
+  <div class="panel"><h3>✅ Bestäubung gelungen – und dann?</h3>
+   <div class="task">❓ Warum wurden bei der Empfängerblüte die Staubblätter entfernt?<br><span class="paper">📝 Notiere deine Antwort auf deinem Papier-Arbeitsblatt.</span></div>
+   <p>Das Pollenkorn <b>keimt</b> auf der Narbe und wächst als <b>Pollenschlauch</b> durch den Griffel bis zu einer Samenanlage. Dort verschmilzt die männliche Keimzelle mit der Eizelle. Das nennt man <b>Befruchtung</b>.</p>
+   <svg viewBox="0 0 200 130" style="max-width:240px;display:block;margin:auto" role="img" aria-label="Pollenschlauch wächst von der Narbe zur Samenanlage"><circle cx="100" cy="14" r="9" fill="#79a66d"/><circle cx="106" cy="8" r="4" fill="#e0b64f"/><ellipse cx="100" cy="100" rx="30" ry="26" fill="#8fbf7f"/><circle cx="100" cy="106" r="8" fill="#f7f3c8" stroke="#aaa"/><path class="tube" id="tube" d="M104 10 C92 40 108 60 100 98"/></svg>
+   <button id="b2">⏩ Zeitraffer: Die Schote wächst</button>
+   <div class="pod" id="pod"><i></i><i></i><i></i><i></i></div>
+   <div class="card"><b>🫛 Vom Fruchtknoten zur Schote</b><ol style="margin:6px 0">
+    <li>Nach der Befruchtung verwelken die Blütenblätter und fallen ab.</li>
+    <li>Der <b>Fruchtknoten</b> bleibt und wächst stark. Seine Wand wird zur <b>Schotenwand</b>.</li>
+    <li>Aus den befruchteten <b>Samenanlagen</b> im Inneren entwickeln sich die <b>Samen</b> (Erbsen). Jeder Samen enthält einen Embryo, aus dem eine neue Pflanze wachsen kann. Die Samen sind mit kleinen Stielen an der Schotenwand befestigt und werden darüber mit Nährstoffen versorgt.</li>
+    <li>Ist die Schote reif, trocknet sie aus und springt auf. Die Samen fallen heraus.</li></ol></div>
+   <img class="photo" src="erbsenschote.jpg" data-alt="https://commons.wikimedia.org/wiki/Special:FilePath/Peas_in_pods_-_Studio.jpg?width=900" onerror="imgFB(this)" alt="Aufgeschnittene Erbsenschote mit Erbsen"><div class="nopic" hidden>🖼️ Foto nicht geladen. Lege die Datei „erbsenschote.jpg“ in denselben Ordner wie die index.html.</div><p class="note">Erbsenschote mit Samen. Foto: Wikimedia Commons.</p>
+   <div class="card" style="background:#fff6dd">ℹ️ <b>Wichtig:</b> Wir haben für die Simulation nur <b>vier Samen</b> ausgewählt. Echte Erbsenschoten enthalten oft mehr oder weniger Samen.</div>
+   <button id="b3" hidden>🫛 Vier Samen entnehmen</button>
+  </div>
+  <div class="panel" id="g3" hidden>
+   <h3>🪴 Pflanzen und gießen</h3>
+   <p class="fb" id="pinfo" aria-live="polite">Tippe zuerst einen Samen an, dann einen Topf.</p>
+   <div style="text-align:center"><button class="seedb" aria-label="Samen 1"></button><button class="seedb" aria-label="Samen 2"></button><button class="seedb" aria-label="Samen 3"></button><button class="seedb" aria-label="Samen 4"></button></div>
+   <div class="pots"><div class="pot" tabindex="0" role="button" aria-label="Topf 1"></div><div class="pot" tabindex="0" role="button" aria-label="Topf 2"></div><div class="pot" tabindex="0" role="button" aria-label="Topf 3"></div><div class="pot" tabindex="0" role="button" aria-label="Topf 4"></div></div>
+   <div style="text-align:center"><button id="b4" disabled>⏩ Zeitraffer: Wachstum</button></div>
+   <p class="fb ok" id="pend" aria-live="polite"></p>
+  </div>
+  <div class="task" id="g5" hidden>❓ Beschreibe, was du bei den neuen Pflanzen beobachtest. Vergleiche mit deiner Vermutung.<br><span class="paper">📝 Notiere deine Antwort auf deinem Papier-Arbeitsblatt.</span><br><br><button data-go="cross">Warum sind alle violett? → Kreuzungsschema</button></div>
+ </div>
+</section>
+
+<!-- 7 KREUZUNG -->
+<section id="cross">
+ <h1>🧩 Mendels Kreuzungsversuch</h1>
+ <div class="tip">💡 <b>Tipp:</b> Oben stehen die Keimzellen der Pollenquelle, links die der Empfängerin. Die Felder entstehen durch Kombinieren.</div>
+ <div class="panel"><h3>Die Elterngeneration (P)</h3>
+  <div class="cmp"><div class="vi"><b style="font-size:1.6rem">VV 🟣</b><br>violett, homozygot</div><div class="wh"><b style="font-size:1.6rem">vv ⚪</b><br>weiß, homozygot</div></div>
+  <p>Beide Eltern sind reinerbig. Jede <b>Keimzelle</b> (Pollen oder Eizelle) erhält nur <b>ein</b> Allel. Die Pflanze VV kann deshalb nur V-Keimzellen bilden, die Pflanze vv nur v-Keimzellen.</p></div>
+ <div class="panel"><h3>🛠️ Baue das Kreuzungsschema (Punnett-Quadrat)</h3>
+  <p class="note" id="ps">Schritt 1 von 11</p>
+  <div id="pun"></div>
+  <p class="fb" id="pfb" aria-live="polite"></p>
+  <div id="pq"></div>
+  <button id="pnext" hidden>Weiter →</button> <button class="sec" id="pshow">👁 Ganzes Schema anzeigen</button> <button class="sec" id="pres">↺ Neu beginnen</button></div>
+ <div class="task">❓ Vergleiche dein Schema mit deiner Vermutung aus dem Spiel. Was stimmt, was nicht?<br><span class="paper">📝 Notiere deine Antwort auf deinem Papier-Arbeitsblatt.</span></div>
+ <button data-go="think">Weiter →</button>
+</section>
+
+<section id="think">
+ <h1>🤔 Überlege zuerst</h1>
+ <div class="tip">💡 <b>Tipp:</b> Schau noch einmal in dein Schema: Welche Pflanze hat den Pollen geliefert?</div>
+ <div class="panel"><h3>Das wissen wir jetzt</h3>
+  <ul><li>Wir haben zwei <b>reinerbige</b> Erbsen gekreuzt: lila (VV) × weiß (vv).</li>
+  <li>Die lila Pflanze war die <b>Pollenquelle</b>, die weiße Pflanze die <b>Empfängerin</b>.</li>
+  <li>Alle Nachkommen haben den Genotyp <b>Vv</b> und blühen <b>lila</b>.</li></ul></div>
+ <div class="panel"><h3>Und wenn wir die Rollen tauschen?</h3>
+  <p>Jetzt soll die <b>weiße</b> Pflanze den Pollen liefern und die <b>lila</b> Pflanze die Empfängerin sein. Eine Kreuzung, bei der die Rollen der Eltern vertauscht werden, heißt <b>reziproke Kreuzung</b>.</p></div>
+ <div class="task">❓ Was vermutest du: Ändert sich das Ergebnis, wenn die Rollen vertauscht werden? Begründe.<br><span class="paper">📝 Notiere deine Vermutung auf deinem Papier-Arbeitsblatt.</span></div>
+ <button data-go="recip">Vermutung prüfen →</button>
+</section>
+
+<section id="recip">
+ <h1>🔄 Die reziproke Kreuzung</h1>
+ <div class="tip">💡 <b>Tipp:</b> Vergleiche beide Schemata Feld für Feld.</div>
+ <div class="panel"><p>Wähle eine Kreuzungsrichtung und vergleiche beide Ergebnisse:</p>
+  <button class="sec" data-rz="0">🟣 Pollen von lila</button><button class="sec" data-rz="1">⚪ Pollen von weiß</button>
+  <div id="rz" aria-live="polite" class="note" style="font-size:1.05rem">Wähle eine Kreuzungsrichtung.</div></div>
+ <div class="task">❓ Vergleiche beide Kreuzungsrichtungen. Was stellst du fest? War deine Vermutung richtig?<br><span class="paper">📝 Notiere deine Antwort auf deinem Papier-Arbeitsblatt.</span></div>
+ <div class="mendel"><img src="https://commons.wikimedia.org/wiki/Special:FilePath/Gregor_Mendel.png" alt="Gregor Mendel"><div><strong>👨‍🔬 Mendel</strong>„Ich habe viele solcher Kreuzungen gemacht, zum Beispiel mit der Samenform, der Samenfarbe und der Wuchshöhe. Das Ergebnis war immer gleich. Deshalb habe ich es in einer Regel zusammengefasst.“</div></div>
+ <button data-go="rule">Zur 1. Mendelschen Regel →</button>
+</section>
+
+<!-- 8 REGEL -->
+<section id="rule">
+ <h1>🏆 Die 1. Mendelsche Regel</h1>
+ <div class="tip">💡 <b>Tipp:</b> Schreibe die Regel mit den Wörtern P, F1, reinerbig und uniform in eigenen Worten auf.</div>
+ <div class="mendel"><img src="https://commons.wikimedia.org/wiki/Special:FilePath/Gregor_Mendel.png" alt="Gregor Mendel"><div><strong>👨‍🔬 Mendel</strong>„Alle Nachkommen der ersten Generation sahen gleich aus. Das war bemerkenswert!“</div></div>
+ <div class="panel" style="border:3px solid var(--pu)"><h2>Uniformitätsregel</h2>
+  <p>Kreuzt man zwei <b>reinerbige</b> Individuen einer Art, die sich in einem Merkmal unterscheiden, sind die Nachkommen der ersten Tochtergeneration (F<sub>1</sub>) bezüglich dieses Merkmals untereinander <b>gleich (uniform)</b>.</p>
+  <p>Bei dominant-rezessiver Vererbung zeigen alle Nachkommen den <b>dominanten Phänotyp</b>. In unserem Beispiel: alle 🟣 violett (alle Vv).</p></div>
+ <div class="card"><b>uniform</b>gleichförmig, einheitlich</div>
+ <div class="q" id="qR"></div>
+ <div class="task" style="border-left-color:var(--pu);background:#f4ecfb">🔬 <b>Zurück zur Forschungsfrage:</b> Beantworte sie jetzt mit deinen Ergebnissen aus Spiel und Kreuzungsschema. Vergleiche mit deiner Vermutung vom Anfang. Formuliere auch die Regel in eigenen Worten.<br><span class="paper">📝 Notiere deine Antwort auf deinem Papier-Arbeitsblatt.</span></div>
+ <button data-go="practice">🎯 Jetzt selbst üben →</button>
+</section>
+
+<!-- 9 ÜBUNG -->
+<section id="practice">
+ <h1>🎯 Übung: Erstelle selbst ein Kreuzungsschema</h1>
+ <div class="tip">💡 <b>Tipp:</b> Gehe in dieser Reihenfolge vor: Keimzellen oben und links eintragen, dann kombinieren. Bei Unsicherheit hilft der Tipp-Button.</div>
+ <div class="panel">
+  <p>Du bekommst zwei weitere reinerbige Erbsenpflanzen als Eltern. <b>Tippe auf die Felder</b>, um sie zu füllen (jeder Tipp schaltet zum nächsten Zeichen weiter). Oben stehen die Keimzellen der Pollenquelle, links die der Empfängerin. Wenn alles passt, tippe auf „Prüfen“.</p>
+  <div id="xg"></div>
+  <p class="fb" id="xfb" aria-live="polite"></p>
+  <div id="xq"></div>
+  <button id="xchk">✔ Prüfen</button><button class="sec" id="xhint">💡 Tipp</button><button class="sec" id="xnew">🔁 Neue Aufgabe</button>
+  <p class="note" id="xsc">Gelöste Aufgaben: 0</p>
+ </div>
+ <div class="task">❓ Schreibe die Aufgabe von oben mit ihrem Kreuzungsschema auf dein Arbeitsblatt und formuliere das Ergebnis mit den Wörtern Genotyp, Phänotyp, heterozygot und uniform.<br><span class="paper">📝 Notiere deine Antwort auf deinem Papier-Arbeitsblatt.</span></div>
+ <div class="panel"><h2>🎉 Geschafft!</h2><p>Du hast die Erbse untersucht, selbst gekreuzt, Schemata erstellt und die Uniformitätsregel angewendet.</p><button data-go="bonus">🚀 Zusatzaufgaben</button><button class="sec" data-go="start">↺ Zurück zum Start</button></div>
+</section>
+
+<section id="bonus">
+ <h1>🚀 Zusatzaufgaben für Schnelle</h1>
+ <div class="tip">💡 <b>Tipp:</b> Lies genau und überlege zuerst, welchen Genotyp die Pflanzen haben.</div>
+ <div class="panel"><h3>Aufgabe 1: Fehlerdetektiv 🕵️</h3>
+  <p>Mia hat für Erbsen (V = lila, v = weiß) das Kreuzungsschema VV × vv aufgestellt. Sieh genau hin:</p>
+  <div class="pg"><div></div><div class="v">V</div><div class="v">V</div><div class="w">v</div><div class="h">Vv</div><div class="h">Vv</div><div class="w">v</div><div class="h" style="background:#fbe3dd">vv</div><div class="h">Vv</div></div>
+  <div class="q" id="qB1"></div></div>
+ <div class="panel"><h3>Aufgabe 2: Wer hat recht? 💬</h3>
+  <p>Jan behauptet: „Bei der Kreuzung VV × vv blüht die Hälfte der Nachkommen weiß, denn die weiße Pflanze muss ja auch etwas vererben.“</p>
+  <div class="q" id="qB2"></div></div>
+ <div class="panel"><h3>Aufgabe 3: Wuchshöhe bei Erbsen 📏</h3>
+  <p>Hohe Erbsen (T) sind dominant über niedrige Erbsen (t). Du kreuzt reinerbig hohe mit reinerbig niedrigen Pflanzen, einmal in jeder Richtung.</p>
+  <div class="q" id="qB3"></div></div>
+ <div class="task">❓ <b>Experimentieraufgabe:</b> Erstelle auf deinem Arbeitsblatt beide Kreuzungsschemata für die <b>Samenform</b> (R = rund, dominant; r = runzelig, rezessiv) mit reinerbigen Eltern, einmal mit runden Erbsen als Pollenquelle und einmal mit runzeligen. Gib Genotyp und Phänotyp der F1 an.<br><span class="paper">📝 Notiere deine Antwort auf deinem Papier-Arbeitsblatt.</span></div>
+ <button data-go="start">↺ Zurück zum Start</button>
+</section>
+</main>
+<footer>
+ <p>🔬 Mendels Forschungslabor · Biologie Klasse 9 · 1. Mendelsche Regel</p>
+ <p class="note">Bildnachweise: Gregor Mendel – Wikimedia Commons, Public Domain. Erbsenfotos: Wikimedia Commons (Lizenzen siehe jeweilige Dateiseite) und Pixabay (Pixabay-Lizenz). Blütenzeichnungen: eigene vereinfachte Illustration.</p>
+</footer>
+
+<script>
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const pages=[["start","🏠 Start"],["plant","🌱 Pflanze"],["flower","🌸 Blüte"],["pollen","🐝 Bestäubung"],["genes1","🧬 Gene"],["genes2","🧬 Genotyp"],["genes3","🧬 VV · Vv · vv"],["game","🖌️ Spiel"],["cross","🧩 Schema"],["think","🤔 Überlegung"],["recip","🔄 Reziprok"],["rule","🏆 Regel"],["practice","🎯 Üben"],["bonus","🚀 Zusatz"]];
+const seen=new Set(["start"]);
+$("#nav").innerHTML=pages.map(p=>`<button data-go="${p[0]}">${p[1]}</button>`).join("");
+function show(id){
+  $$("main section").forEach(s=>s.classList.toggle("active",s.id===id));
+  seen.add(id);
+  $$("#nav button").forEach((b,i)=>{b.classList.toggle("on",pages[i][0]===id);b.classList.toggle("seen",seen.has(pages[i][0])&&pages[i][0]!==id)});
+  const pc=Math.round(seen.size/pages.length*100);
+  $("#pb").style.width=pc+"%";$("#pt").textContent="Dein Fortschritt: "+pc+" %";
+  try{zDraw()}catch(e){}
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+document.addEventListener("click",e=>{const b=e.target.closest("[data-go]");if(b)show(b.dataset.go)});
+show("start");
+
+/* ---------- Blüten-Zeichnung ---------- */
+function flower(c,pol){const W=c==="w",F=W?["#ffffff","#a9a9a9","#a9cf93"]:["#9b6cc8","#6a4a98","#7d4fae"],L=W?["#f8f8ee","#a9a9a9"]:["#b793d9","#8a63b3"],S=W?["#dcebcf","#8fae7d"]:["#cdb3e6","#9a7bbd"];
+  const A=[[66,128],[82,116],[118,116],[134,128]];
+  let s=`<svg viewBox="0 0 200 224" role="img" aria-label="Zeichnung einer ${W?"weißen":"lila"} Erbsenblüte: hinten die Fahne, vorn die Flügel, darin das Schiffchen">
+  <rect x="95" y="198" width="10" height="26" fill="#79a66d"/>
+  <g class="p" data-n="Fahne"><path d="M100 36 C86 8 22 10 12 62 C6 104 40 140 80 152 L120 152 C160 140 194 104 188 62 C178 10 114 8 100 36 Z" fill="${F[0]}" stroke="${F[1]}" stroke-width="3"/><path d="M100 40 V120 M68 30 L86 120 M132 30 L114 120 M36 52 L80 128 M164 52 L120 128 M20 84 L74 138 M180 84 L126 138" stroke="${F[2]}" stroke-width="1.3" fill="none" opacity=".55"/></g>
+  <ellipse cx="100" cy="172" rx="15" ry="24" fill="#8fbf7f" stroke="#5f9a55" stroke-width="2" data-i="Fruchtknoten: Hier liegen die Samenanlagen. Später wird daraus die Schote."/>
+  <g data-i="Samenanlagen: Sie enthalten die Eizellen. Nach der Befruchtung werden daraus Samen."><circle cx="100" cy="160" r="5" fill="#f7f3c8" stroke="#aaa"/><circle cx="100" cy="172" r="5" fill="#f7f3c8" stroke="#aaa"/><circle cx="100" cy="184" r="5" fill="#f7f3c8" stroke="#aaa"/></g>
+  <path d="M100 150 V110" stroke="#79a66d" stroke-width="6" stroke-linecap="round" data-i="Griffel: Er verbindet Narbe und Fruchtknoten. Der Pollenschlauch wächst hier hindurch."/>
+  <circle class="stg" cx="100" cy="104" r="9" fill="#79a66d" stroke="#4d7f43" stroke-width="2" data-i="Narbe: Die klebrige Spitze des Stempels. Hier landet der Pollen."/>`;
+  A.forEach(a=>{s+=`<g class="st" data-i="Staubblatt (männliches Blütenorgan): Die Staubbeutel bilden den Pollen mit den männlichen Keimzellen."><path d="M100 160 Q${a[0]} 150 ${a[0]} ${a[1]+4}" stroke="#c9a23d" stroke-width="3" fill="none"/><ellipse cx="${a[0]}" cy="${a[1]}" rx="9" ry="6" fill="#e0b64f" stroke="#a8822a"/>${pol?`<circle cx="${a[0]-5}" cy="${a[1]-8}" r="3" fill="#f3d36b"/><circle cx="${a[0]+5}" cy="${a[1]-9}" r="3" fill="#f3d36b"/>`:""}</g>`});
+  s+=`<ellipse class="p" data-n="Schiffchen" cx="100" cy="140" rx="26" ry="58" fill="${S[0]}" stroke="${S[1]}" stroke-width="2"/>
+  <ellipse class="p" data-n="Flügel" cx="80" cy="112" rx="30" ry="60" fill="${L[0]}" stroke="${L[1]}" stroke-width="2" transform="rotate(10 80 112)"/>
+  <ellipse class="p" data-n="Flügel" cx="120" cy="112" rx="30" ry="60" fill="${L[0]}" stroke="${L[1]}" stroke-width="2" transform="rotate(-10 120 112)"/>
+  <path d="M100 196 C80 190 66 186 56 192 C68 208 90 208 100 202 Z M100 196 C120 190 134 186 144 192 C132 208 110 208 100 202 Z" fill="#79a66d" stroke="#4d7f43" stroke-width="1.5"/></svg>`;
+  return s}
+function initFlower(){
+  $("#fmain").innerHTML=flower("v");$("#finfo").textContent="Tippe auf ein Blütenblatt.";
+}
+$("#fmain").addEventListener("click",e=>{
+  const p=e.target.closest(".p");
+  if(p){p.classList.add("gone");const n=p.dataset.n;
+    $("#finfo").textContent=n==="Fahne"?"🚩 Die große Fahne sitzt hinten und lockt Insekten an. Entferne weiter die Flügel und das Schiffchen!":n==="Flügel"?"🪽 Die Flügel liegen vorn und decken das Schiffchen ab.":"⛵ Das Schiffchen umschließt Stempel und Staubblätter. Jetzt sind sie frei – tippe sie an!";return}
+  const i=e.target.closest("[data-i]");if(i&&!$$("#fmain .p:not(.gone)").length)$("#finfo").textContent="🔎 "+i.dataset.i;
+  else if(i)$("#finfo").textContent="Entferne erst alle Blütenblätter.";
+});
+$("#fres").onclick=initFlower;initFlower();
+
+$("#pw").innerHTML='<div class="grid"><div>'+flower("v")+'<b>lila Blüte</b></div><div>'+flower("w")+'<b>weiße Blüte</b></div></div><p class="note">Zeichnung. Lege für ein Foto „erbsen-lila-weiss.jpg“ in den Ordner der index.html.</p>';
+/* ---------- Spiel ---------- */
+const brush=$("#brush"),stage=$("#stage");
+let g,drag=false;
+function gInit(){
+  g={petals:0,st:0,loaded:false,stage:1,done:false};
+  $("#grec").innerHTML=flower("w");$("#gdon").innerHTML=flower("v",1);
+  $("#grec").classList.remove("s2");
+  $("#g2").hidden=true;$("#g3").hidden=true;$("#g5").hidden=true;$("#b3").hidden=true;
+  $("#pod").classList.remove("big");$("#tube").classList.remove("go");
+  brush.classList.remove("ld");brushHome();
+  $("#ginfo").textContent="Schritt 1: Entferne bei beiden Blüten alle Blütenblätter. Tippe dazu Fahne, beide Flügel und das Schiffchen an.";
+  planted=0;watered=0;selSeed=null;
+  $$(".seedb").forEach(b=>b.className="seedb");$$(".pot").forEach(p=>{p.innerHTML="";p.dataset.s=0});
+  $("#b4").disabled=true;$("#pend").textContent="";$("#pinfo").textContent="Tippe zuerst einen Samen an, dann einen Topf.";
+}
+function brushHome(){brush.style.left=(stage.clientWidth/2-30)+"px";brush.style.top=(stage.clientHeight-80)+"px"}
+function gPetal(e){const p=e.target.closest(".p");if(g.stage!==1||!p||p.classList.contains("gone"))return;p.classList.add("gone");g.petals++;const l=8-g.petals;
+  if(l===0){g.stage=2;$("#grec").classList.add("s2");$("#ginfo").textContent="Schritt 2: Tippe die gelben Staubblätter (männliche Blütenorgane) der weißen Empfängerblüte an, um sie zu entfernen. So kann sich die Blüte nicht selbst bestäuben!"}
+  else $("#ginfo").textContent="Gut! Noch "+l+" Blütenblatt/-blätter an beiden Blüten.";}
+$("#gdon").addEventListener("click",gPetal);
+$("#grec").addEventListener("click",e=>{
+  if(g.stage===1)return gPetal(e);
+  if(g.stage===2){const s=e.target.closest(".st");if(!s||s.classList.contains("gone"))return;s.classList.add("gone");g.st++;
+    if(g.st===4){g.stage=3;$("#grec").classList.remove("s2");$("#ginfo").textContent="Schritt 3: Ziehe den Pinsel 🖌️ über die gelben Staubbeutel der lila Pollenquelle, um Pollen aufzunehmen."}
+    else $("#ginfo").textContent="Sehr gut! Noch "+(4-g.st)+" Staubblatt/-blätter.";}
+});
+function hit(el,x,y,m){const r=el.getBoundingClientRect();return x>r.left-m&&x<r.right+m&&y>r.top-m&&y<r.bottom+m}
+brush.addEventListener("pointerdown",e=>{if(g.stage<3||g.done)return;drag=true;brush.setPointerCapture(e.pointerId);e.preventDefault()});
+brush.addEventListener("pointermove",e=>{if(!drag)return;
+  const r=stage.getBoundingClientRect();brush.style.left=(e.clientX-r.left-20)+"px";brush.style.top=(e.clientY-r.top-50)+"px";
+  if(g.stage===3&&$$("#gdon .st ellipse").some(a=>hit(a,e.clientX,e.clientY,14))){g.loaded=true;g.stage=4;brush.classList.add("ld");$("#ginfo").textContent="Pollen aufgenommen! Schritt 4: Trage den Pinsel zur grünen Narbe der linken Blüte und lasse ihn dort los."}
+});
+brush.addEventListener("pointerup",e=>{if(!drag)return;drag=false;
+  if(g.stage===4&&hit($("#grec .stg"),e.clientX,e.clientY,22)){
+    g.done=true;brush.classList.remove("ld");brushHome();
+    $("#ginfo").textContent="🎉 Geschafft! Der Pollen liegt auf der Narbe. Die kontrollierte Bestäubung ist gelungen.";
+    $("#g2").hidden=false;setTimeout(()=>$("#tube").classList.add("go"),300);$("#g2").scrollIntoView({behavior:"smooth"});
+  }else if(g.stage===4)$("#ginfo").textContent="Fast! Der Pinsel muss die grüne Narbe oben in der linken Blüte berühren. Versuche es noch einmal.";
+});
+$("#b2").onclick=()=>{$("#pod").classList.add("big");$("#b3").hidden=false};
+$("#b3").onclick=()=>{$("#g3").hidden=false;$("#g3").scrollIntoView({behavior:"smooth"})};
+let planted=0,watered=0,selSeed=null;
+$$(".seedb").forEach(b=>b.onclick=()=>{if(b.classList.contains("used"))return;$$(".seedb").forEach(x=>x.classList.remove("sel"));b.classList.add("sel");selSeed=b;$("#pinfo").textContent="Tippe jetzt auf einen Topf."});
+function potAct(p){
+  if(p.dataset.s==="0"){if(!selSeed){$("#pinfo").textContent="Tippe zuerst einen Samen an.";return}
+    selSeed.classList.add("used");selSeed.classList.remove("sel");selSeed=null;p.dataset.s=1;p.textContent="🟤 Erde";planted++;
+    $("#pinfo").textContent=planted<4?"Gepflanzt! Noch "+(4-planted)+" Samen.":"Alle gepflanzt! Tippe jetzt jeden Topf zum Gießen an 🚿."}
+  else if(p.dataset.s==="1"&&planted===4){p.dataset.s=2;p.textContent="💧💧";watered++;
+    if(watered===4){$("#pinfo").textContent="Alles gegossen! Starte den Zeitraffer.";$("#b4").disabled=false}}
+}
+$$(".pot").forEach(p=>{p.dataset.s=0;p.onclick=()=>potAct(p);p.onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();potAct(p)}}});
+$("#b4").onclick=()=>{$("#b4").disabled=true;const P=$$(".pot");
+  P.forEach(p=>p.textContent="🌱");
+  setTimeout(()=>P.forEach(p=>p.innerHTML="🌿<br>🌿"),1500);
+  setTimeout(()=>P.forEach(p=>p.innerHTML="🌿🟣"),3000);
+  setTimeout(()=>{$("#pend").textContent="🟣 Alle vier Pflanzen der F1-Generation blühen lila – obwohl eine Elternpflanze weiße Blüten hat!";$("#g5").hidden=false},3200)};
+$("#gres").onclick=gInit;gInit();window.addEventListener("resize",()=>{if(g.stage<3||g.done)brushHome()});
+
+/* ---------- Punnett ---------- */
+const PS=[
+ {i:"Das sind unsere Eltern: eine <b>violette Pflanze (VV)</b> und eine <b>weiße Pflanze (vv)</b>. Beide sind reinerbig. Baue jetzt gemeinsam mit mir das Kreuzungsschema!"},
+ {q:"Welche Allele besitzt die violette Pflanze VV?",o:["V und V","v und v","V und v"],a:0,ok:"Richtig: VV = zwei V-Allele.",h:"Die Buchstaben stehen schon im Genotyp VV."},
+ {q:"Welche Allele besitzt die weiße Pflanze vv?",o:["V und V","v und v","V und v"],a:1,ok:"Richtig: vv = zwei v-Allele.",h:"Schau dir den Genotyp vv an."},
+ {q:"Welche Keimzellen kann die Pflanze VV bilden?",o:["Nur V","V und v","Nur v"],a:0,ok:"Genau – jede Keimzelle erhält ein Allel, und VV hat nur V.",h:"Wenn beide Allele V sind, kann jede Keimzelle nur V bekommen."},
+ {q:"Welche Keimzellen kann die Pflanze vv bilden?",o:["Nur V","V und v","Nur v"],a:2,ok:"Genau – vv bildet nur v-Keimzellen.",h:"Beide Allele sind v."},
+ {q:"Oben im Schema stehen die Keimzellen (Pollen) der violetten Pflanze. Welches Allel trägst du ein?",o:["V","v"],a:0,fill:"top",ok:"Eingetragen: oben V und V.",h:"Violett = VV, also V."},
+ {q:"Links stehen die Keimzellen (Eizellen) der weißen Pflanze. Welches Allel trägst du ein?",o:["V","v"],a:1,fill:"left",ok:"Eingetragen: links v und v.",h:"Weiß = vv, also v."},
+ {q:"Kombiniere das Allel von oben (V) mit dem von links (v). Welche Kombination steht in jedem Feld?",o:["VV","Vv","vv"],a:1,fill:"cells",ok:"Alle vier Felder: Vv.",h:"Ein V von oben + ein v von links. Das große V schreibt man zuerst."},
+ {q:"Welcher Genotyp kommt bei den Nachkommen vor?",o:["Alle Vv","VV, Vv und vv gemischt","Alle VV"],a:0,ok:"100 % Vv – also 100 % heterozygot (mischerbig).",h:"Schau auf die Felder: Steht überall dasselbe?"},
+ {q:"Welche Blütenfarbe haben die Nachkommen? (V ist dominant)",o:["Alle violett","Alle weiß","Violett und weiß gemischt"],a:0,fill:"pheno",ok:"Alle violett – V setzt sich gegenüber v durch.",h:"Bei Vv ist V dominant."},
+ {i:"<b>Auswertung:</b><br>✅ 100 % Genotyp <b>Vv</b><br>✅ 100 % heterozygot (mischerbig)<br>✅ 100 % <b>violette</b> Blüten<br>✅ Alle Nachkommen sind bezüglich der Blütenfarbe <b>gleich (uniform)</b>."}
+];
+let pi=0,pf={};
+function pGrid(){
+  const c=(k,t)=>pf[k]?t:"?";const ph=pf.pheno?"<br>🟣":"";
+  const cell=pf.cells?`Vv${ph}`:"?";
+  return `<div class="pg"><div></div><div class="${pf.top?"v":""}">${pf.top?"V":"?"}</div><div class="${pf.top?"v":""}">${pf.top?"V":"?"}</div>
+  <div class="${pf.left?"w":""}">${pf.left?"v":"?"}</div><div class="${pf.cells?"h":""}">${cell}</div><div class="${pf.cells?"h":""}">${cell}</div>
+  <div class="${pf.left?"w":""}">${pf.left?"v":"?"}</div><div class="${pf.cells?"h":""}">${cell}</div><div class="${pf.cells?"h":""}">${cell}</div></div>
+  <p class="note" style="text-align:center">oben: Keimzellen (Pollen) der violetten Pflanze · links: Keimzellen (Eizellen) der weißen Pflanze</p>`;
+}
+function pRender(){
+  const s=PS[pi];$("#ps").textContent="Schritt "+(pi+1)+" von "+PS.length;$("#pun").innerHTML=pGrid();$("#pfb").textContent="";$("#pfb").className="fb";
+  $("#pnext").hidden=true;
+  if(s.i){$("#pq").innerHTML=`<div class="card">${s.i}</div>`;$("#pnext").hidden=pi===PS.length-1;$("#pnext").textContent="Weiter →"}
+  else{$("#pq").innerHTML=`<p><b>${s.q}</b></p>`+s.o.map((o,k)=>`<button class="sec" data-pk="${k}">${o}</button>`).join("")}
+}
+$("#pq").addEventListener("click",e=>{const b=e.target.closest("[data-pk]");if(!b)return;const s=PS[pi],f=$("#pfb");
+  if(+b.dataset.pk===s.a){f.textContent="✅ "+s.ok;f.className="fb ok";if(s.fill){pf[s.fill]=1;$("#pun").innerHTML=pGrid()}
+    $$("#pq [data-pk]").forEach(x=>x.disabled=true);$("#pnext").hidden=false;$("#pnext").textContent="Weiter →"}
+  else{f.textContent="🤔 Noch nicht ganz. Tipp: "+s.h;f.className="fb bad"}});
+$("#pnext").onclick=()=>{pi++;pRender()};
+$("#pshow").onclick=()=>{pf={top:1,left:1,cells:1,pheno:1};$("#pun").innerHTML=pGrid()};
+$("#pres").onclick=()=>{pi=0;pf={};pRender()};pRender();
+
+/* ---------- Reziprok ---------- */
+$$("[data-rz]").forEach(b=>b.onclick=()=>{
+  const r=b.dataset.rz==="0";
+  $("#rz").innerHTML=`<p><b>${r?"🟣 Pollen von der violetten (VV), Empfängerin weiß (vv)":"⚪ Pollen von der weißen (vv), Empfängerin violett (VV)"}</b></p>
+  <div class="pg"><div></div><div class="${r?"v":"w"}">${r?"V":"v"}</div><div class="${r?"v":"w"}">${r?"V":"v"}</div>
+  <div class="${r?"w":"v"}">${r?"v":"V"}</div><div class="h">Vv 🟣</div><div class="h">Vv 🟣</div>
+  <div class="${r?"w":"v"}">${r?"v":"V"}</div><div class="h">Vv 🟣</div><div class="h">Vv 🟣</div></div>
+  <p><b>Ergebnis: 100 % Vv, alle violett.</b> Bei unserem vereinfachten Modell entsteht in beiden Richtungen dieselbe F1-Generation.</p>`});
+
+/* ---------- Quiz ---------- */
+function quiz(el,qs){let h="";qs.forEach((q,i)=>{h+=`<p><b>${q[0]}</b></p>`+q[1].map((o,k)=>`<button data-q="${i}" data-k="${k}">${o}</button>`).join("")+`<p class="fb" id="${el.id}f${i}" aria-live="polite"></p>`});
+  el.innerHTML="<h3>🧠 Teste dein Wissen</h3>"+h;
+  el.onclick=e=>{const b=e.target.closest("[data-q]");if(!b)return;const i=+b.dataset.q,f=$("#"+el.id+"f"+i),good=+b.dataset.k===qs[i][2];
+    f.textContent=good?"✅ Richtig! "+qs[i][3]:"🤔 Noch nicht ganz – überlege noch einmal!";f.className="fb "+(good?"ok":"bad")}}
+quiz($("#qG"),[
+ ["Was bedeutet homozygot?",["Beide Allele sind gleich","Beide Allele sind verschieden","Es gibt kein Allel"],0,"Zum Beispiel VV oder vv."],
+ ["Welchen Phänotyp hat eine Pflanze mit Vv (V dominant)?",["Weiß","Violett","Halb violett, halb weiß"],1,"V ist dominant und setzt sich durch."]]);
+quiz($("#qR"),[
+ ["Wie nennt man die Elterngeneration?",["P-Generation","F1-Generation"],0,"P steht für Parentalgeneration."],
+ ["Wie nennt man die erste Tochtergeneration?",["P-Generation","F1-Generation"],1,"F1 = erste Filialgeneration."],
+ ["Was bedeutet „uniform“?",["Gleichförmig","Verschieden","Rezessiv"],0,"Alle F1-Nachkommen sehen bezüglich des Merkmals gleich aus."]]);
+
+quiz($("#qG0"),[
+ ["Eineiige Zwillinge haben …",["denselben Genotyp, aber nicht zwingend denselben Phänotyp","verschiedene Genotypen","immer denselben Phänotyp"],0,"Die Umwelt verändert den Phänotyp."],
+ ["Warum haben Geschwister oft verschiedene Genotypen?",["Durch zufällige Verteilung bei der Meiose und zufällige Befruchtung","Weil die DNA sich im Laufe des Lebens ändert","Weil nur der Vater Allele vererbt"],0,"Jede Keimzelle erhält eine andere Auswahl an Allelen."],
+ ["Was ist ein Phänotyp?",["Die Allelkombination","Alle sichtbaren oder messbaren Merkmale","Ein Chromosom"],1,"Er entsteht aus Genotyp und Umwelt."]]);
+
+/* ---------- Übung ---------- */
+const TR=[{D:"V",d:"v",dm:"violette Blüten",rc:"weiße Blüten"},{D:"R",d:"r",dm:"runde Samen",rc:"runzelige Samen"},{D:"Y",d:"y",dm:"gelbe Samen",rc:"grüne Samen"},{D:"T",d:"t",dm:"hohe Pflanzen",rc:"niedrige Pflanzen"}];
+let X,xsolved=0;
+function xNew(){X={t:TR[Math.floor(Math.random()*TR.length)],sw:Math.random()<.5,top:[0,0],left:[0,0],cells:[0,0,0,0],ph:false};$("#xfb").textContent="";$("#xq").innerHTML="";$("#xchk").hidden=false;xDraw()}
+function xDraw(){const t=X.t,tg=X.sw?t.d+t.d:t.D+t.D,lg=X.sw?t.D+t.D:t.d+t.d,tp=X.sw?t.rc:t.dm,lp=X.sw?t.dm:t.rc;
+ const H=a=>["?",t.D,t.d][a],C=a=>["?",t.D+t.D,t.D+t.d,t.d+t.d][a],b=(k,txt,f)=>`<button data-x="${k}" class="${f?"f":""}" aria-label="Feld ${k}">${txt}</button>`;
+ $("#xg").innerHTML=`<p>🟡 <b>Pollenquelle:</b> Erbse mit ${tp}, Genotyp ${tg}<br>🟤 <b>Empfängerin:</b> Erbse mit ${lp}, Genotyp ${lg}</p>
+ <div class="pg"><div></div>${b("t0",H(X.top[0]),X.top[0])}${b("t1",H(X.top[1]),X.top[1])}
+ ${b("l0",H(X.left[0]),X.left[0])}${b("c0",C(X.cells[0]),X.cells[0])}${b("c1",C(X.cells[1]),X.cells[1])}
+ ${b("l1",H(X.left[1]),X.left[1])}${b("c2",C(X.cells[2]),X.cells[2])}${b("c3",C(X.cells[3]),X.cells[3])}</div>`}
+$("#xg").addEventListener("click",e=>{const b=e.target.closest("[data-x]");if(!b||X.ph)return;const k=b.dataset.x,i=+k[1],n=k[0]==="c"?4:3;
+ if(k[0]==="t")X.top[i]=(X.top[i]+1)%3;else if(k[0]==="l")X.left[i]=(X.left[i]+1)%3;else X.cells[i]=(X.cells[i]+1)%4;xDraw()});
+$("#xhint").onclick=()=>{$("#xfb").textContent="💡 Eine reinerbige Pflanze bildet nur eine Sorte Keimzellen. Oben stehen die Keimzellen der Pollenquelle, links die der Empfängerin. In jedes Feld kommt ein Allel von oben und eins von links (großer Buchstabe zuerst).";$("#xfb").className="fb"};
+$("#xchk").onclick=()=>{if(X.ph)return;const t=X.t,f=$("#xfb"),eT=X.sw?1:0,eL=X.sw?0:1;f.className="fb bad";
+ // Index: 1 = D, 2 = d
+ const wT=X.top.some(v=>v!==(X.sw?2:1)),wL=X.left.some(v=>v!==(X.sw?1:2));
+ if(X.top.includes(0)||X.left.includes(0)||X.cells.includes(0)){f.textContent="🤔 Es sind noch Felder mit „?“ offen.";return}
+ if(wT){f.textContent="🤔 Prüfe die Keimzellen oben: Die Pollenquelle ist reinerbig und bildet nur eine Sorte Keimzellen.";return}
+ if(wL){f.textContent="🤔 Prüfe die Keimzellen links: Die Empfängerin ist reinerbig und bildet nur eine Sorte Keimzellen.";return}
+ if(X.cells.some(v=>v!==2)){f.textContent="🤔 Die eingetragenen Allele oben und links sind richtig. Kombiniere sie jetzt in jedem Feld: ein Allel von oben + eins von links.";return}
+ X.ph=true;f.className="fb ok";f.textContent="✅ Das Schema ist richtig! Alle vier Felder: "+t.D+t.d+". Letzte Frage:";
+ const o=[t.dm,t.rc,"gemischt: manche "+t.dm+", manche "+t.rc].sort(()=>Math.random()-.5);
+ $("#xq").innerHTML=`<p><b>Welchen Phänotyp haben die Nachkommen (${t.D} ist dominant)?</b></p>`+o.map(x=>`<button class="sec" data-xo="${x}">${x}</button>`).join("")};
+$("#xq").addEventListener("click",e=>{const b=e.target.closest("[data-xo]");if(!b)return;const t=X.t,f=$("#xfb");
+ if(b.dataset.xo===t.dm){xsolved++;$("#xsc").textContent="Gelöste Aufgaben: "+xsolved;f.className="fb ok";f.textContent="🎉 Richtig! 100 % "+t.D+t.d+" (heterozygot), 100 % "+t.dm+" – die F1 ist uniform. Tippe auf „Neue Aufgabe“.";$("#xq").innerHTML=""}
+ else{f.className="fb bad";f.textContent="🤔 Überlege: Welches Allel ist dominant, und wie lautet der Genotyp?"}});
+$("#xnew").onclick=xNew;xNew();
+
+quiz($("#qB1"),[["Was ist an Mias Schema falsch?",["Das Feld unten links muss Vv heißen","Die Keimzellen oben müssen V und v sein","Es ist alles richtig"],0,"Jedes Feld enthält ein V von oben und ein v von links, also Vv."]]);
+quiz($("#qB2"),[["Hat Jan recht?",["Nein: Alle Nachkommen sind Vv und blühen lila","Ja: Die Hälfte blüht weiß","Nein: Alle Nachkommen blühen weiß"],0,"Das dominante V setzt sich in allen Vv-Pflanzen durch."]]);
+quiz($("#qB3"),[["Was ändert sich bei der reziproken Kreuzung TT × tt?",["Nichts: Die F1 besteht in beiden Fällen aus Tt-Pflanzen und ist hoch","Die F1 ist niedrig","Die F1 ist halb hoch, halb niedrig"],0,"Die Kreuzungsrichtung ändert das Ergebnis im Modell nicht."]]);
+/* ---------- Lückentext ---------- */
+const WORDS=["Variabilität","Eizelle","diploid","Gen","Meiose","DNA","haploid","Mitose","Basen"];let selW=null;
+function ltInit(){selW=null;$("#wb").innerHTML=WORDS.map(w=>`<button class="wd" data-w="${w}">${w}</button>`).join("");
+ $$("#lt .gap").forEach(g=>{g.textContent="";g.className="gap";delete g.dataset.v});$("#ltf").textContent=""}
+function ltUsed(){const u=$$("#lt .gap").map(g=>g.dataset.v);$$("#wb .wd").forEach(b=>b.classList.toggle("used",u.includes(b.dataset.w)))}
+$("#wb").addEventListener("click",e=>{const b=e.target.closest(".wd");if(!b)return;$$("#wb .wd").forEach(x=>x.classList.remove("sel"));b.classList.add("sel");selW=b.dataset.w});
+$("#lt").addEventListener("click",e=>{const g=e.target.closest(".gap");if(!g)return;
+ if(selW){g.dataset.v=selW;g.textContent=selW;g.className="gap f";selW=null;$$("#wb .wd").forEach(x=>x.classList.remove("sel"))}
+ else if(g.dataset.v){delete g.dataset.v;g.textContent="";g.className="gap"}
+ ltUsed()});
+$("#ltc").onclick=()=>{let ok=0,open=0;$$("#lt .gap").forEach(g=>{if(!g.dataset.v){open++;return}
+  const r=g.dataset.v===g.dataset.a;g.className="gap "+(r?"ok":"no");if(r)ok++});
+ const f=$("#ltf");f.className="fb "+(ok===9?"ok":"bad");
+ f.textContent=ok===9?"🎉 Alles richtig! Mit diesem Wissen starten wir jetzt die Forschung.":(open?open+" Lücke(n) sind noch leer. ":"")+ok+" von 9 richtig. Rot markierte Wörter passen nicht – tippe sie an und versuche es erneut."};
+$("#ltr").onclick=ltInit;ltInit();
+</script>
+</body>
+</html>

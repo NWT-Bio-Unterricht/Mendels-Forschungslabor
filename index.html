@@ -1,0 +1,930 @@
+
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mendels Forschungslabor – Die Uniformitätsregel</title>
+
+<style>
+:root {
+  --green: #245b45;
+  --light: #eaf2ec;
+  --cream: #f7f6ef;
+  --dark: #20352c;
+  --purple: #7654a5;
+  --pink: #f0dce9;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: var(--cream);
+  color: var(--dark);
+  line-height: 1.6;
+}
+
+header {
+  background: var(--green);
+  color: white;
+  padding: 18px 5%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+header strong { font-size: 1.2rem; }
+
+nav {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+nav button {
+  background: transparent;
+  color: white;
+  border: 1px solid #ffffff88;
+  border-radius: 20px;
+  padding: 9px 13px;
+}
+
+button {
+  cursor: pointer;
+  font-size: 1rem;
+  border: 0;
+  border-radius: 12px;
+  padding: 12px 18px;
+  background: var(--green);
+  color: white;
+  margin: 4px;
+  touch-action: manipulation;
+}
+
+button:hover { filter: brightness(1.12); }
+
+button:focus, input:focus, textarea:focus {
+  outline: 3px solid #e5b95c;
+  outline-offset: 3px;
+}
+
+button.secondary {
+  background: #e2eae3;
+  color: var(--dark);
+}
+
+main {
+  max-width: 1050px;
+  margin: auto;
+  padding: 24px 18px 70px;
+}
+
+section {
+  display: none;
+  animation: appear .3s ease;
+}
+
+section.active { display: block; }
+
+@keyframes appear {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+h1 { font-size: clamp(2rem, 5vw, 3.3rem); line-height: 1.15; }
+h2 { color: var(--green); margin-top: 0; }
+h3 { color: var(--green); }
+
+.hero {
+  background: linear-gradient(135deg, #e4eee5, #f7f0e3);
+  padding: 35px;
+  border-radius: 22px;
+  margin: 20px 0;
+}
+
+.panel {
+  background: white;
+  padding: 24px;
+  border-radius: 18px;
+  margin: 18px 0;
+  box-shadow: 0 3px 14px #20352c12;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 18px;
+}
+
+.photo {
+  width: 100%;
+  max-height: 390px;
+  object-fit: cover;
+  border-radius: 14px;
+}
+
+.mendel {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  background: #f0eaf5;
+  border-radius: 18px;
+  padding: 16px;
+  margin: 20px 0;
+}
+
+.mendel img {
+  width: 100px;
+  height: 125px;
+  object-fit: cover;
+  object-position: center top;
+  border-radius: 12px;
+}
+
+.speech { flex: 1; }
+
+.speech strong {
+  color: var(--purple);
+  display: block;
+  margin-bottom: 5px;
+}
+
+.question {
+  background: #fff8e7;
+  border-left: 5px solid #d4a84e;
+  padding: 16px;
+  border-radius: 8px;
+  margin: 18px 0;
+}
+
+input, textarea, select {
+  width: 100%;
+  padding: 13px;
+  border: 1px solid #b8c8bc;
+  border-radius: 10px;
+  font: inherit;
+  margin: 6px 0 14px;
+  background: white;
+}
+
+textarea { min-height: 95px; resize: vertical; }
+
+label { font-weight: bold; display: block; }
+
+.progress {
+  background: #dce5dd;
+  height: 9px;
+  border-radius: 20px;
+  overflow: hidden;
+  margin: 12px 0;
+}
+
+#progressBar {
+  height: 100%;
+  width: 0;
+  background: #72a17b;
+  transition: width .3s;
+}
+
+.flower-area {
+  background: #f5f1e8;
+  border-radius: 18px;
+  padding: 20px;
+  text-align: center;
+}
+
+.flower {
+  position: relative;
+  width: 230px;
+  height: 230px;
+  margin: 15px auto;
+}
+
+.petal {
+  position: absolute;
+  width: 85px;
+  height: 115px;
+  background: #f0d5e5;
+  border: 2px solid #d4a7c3;
+  border-radius: 70% 70% 45% 45%;
+  left: 72px;
+  top: 5px;
+  transform-origin: 50% 100%;
+  transition: opacity .4s, transform .4s;
+}
+
+.petal:nth-child(2) { transform: rotate(90deg); }
+.petal:nth-child(3) { transform: rotate(180deg); }
+.petal:nth-child(4) { transform: rotate(270deg); }
+
+.petal.hidden {
+  opacity: 0;
+  transform: scale(.1);
+}
+
+.stamen {
+  position: absolute;
+  width: 8px;
+  height: 85px;
+  background: #e0b64f;
+  border-radius: 8px;
+  left: 110px;
+  top: 65px;
+  transform-origin: bottom;
+}
+
+.stamen:nth-child(6) { transform: rotate(25deg); }
+.stamen:nth-child(7) { transform: rotate(-25deg); }
+.stamen:nth-child(8) { transform: rotate(50deg); }
+.stamen:nth-child(9) { transform: rotate(-50deg); }
+
+.pistil {
+  position: absolute;
+  left: 109px;
+  top: 48px;
+  width: 12px;
+  height: 105px;
+  background: #79a66d;
+  border-radius: 10px;
+  z-index: 3;
+}
+
+.pistil:before {
+  content: "";
+  position: absolute;
+  width: 23px;
+  height: 13px;
+  background: #79a66d;
+  border-radius: 50%;
+  top: -5px;
+  left: -5px;
+}
+
+.wind-box {
+  height: 170px;
+  background: #e6f0f2;
+  border-radius: 15px;
+  position: relative;
+  overflow: hidden;
+  margin: 15px 0;
+}
+
+.pollen {
+  position: absolute;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: #e5bd43;
+  top: 70px;
+  left: 10px;
+  animation: fly 3s linear infinite;
+}
+
+.pollen:nth-child(2) { top: 100px; animation-delay: .7s; }
+.pollen:nth-child(3) { top: 40px; animation-delay: 1.3s; }
+
+@keyframes fly {
+  from { left: -20px; }
+  to { left: 105%; }
+}
+
+.cross-result {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  padding: 18px;
+  background: #f4f1f8;
+  border-radius: 15px;
+  margin: 15px 0;
+}
+
+.plant {
+  text-align: center;
+  min-width: 90px;
+}
+
+.flower-icon {
+  font-size: 3rem;
+  display: block;
+}
+
+.generation {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin: 12px 0;
+}
+
+.seed {
+  padding: 14px 5px;
+  text-align: center;
+  background: #eee7f6;
+  border-radius: 12px;
+  font-weight: bold;
+}
+
+.note {
+  font-size: .88rem;
+  color: #52675a;
+}
+
+footer {
+  background: var(--green);
+  color: white;
+  text-align: center;
+  padding: 25px;
+}
+
+@media(max-width:600px) {
+  header { align-items: flex-start; }
+  nav { width: 100%; }
+  nav button { font-size: .85rem; padding: 8px; }
+  .hero { padding: 22px; }
+  .mendel { align-items: flex-start; }
+  .mendel img { width: 82px; height: 110px; }
+}
+
+@media print {
+  header, footer, .no-print, button { display: none !important; }
+  section { display: block !important; page-break-after: always; }
+  body { background: white; }
+  .panel { box-shadow: none; border: 1px solid #ddd; }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <strong>🔬 MENDELS FORSCHUNGS-LABOR</strong>
+  <nav>
+    <button onclick="showPage('start')">Start</button>
+    <button onclick="showPage('plant')">Pflanze</button>
+    <button onclick="showPage('flower')">Blüte</button>
+    <button onclick="showPage('wind')">Wind</button>
+    <button onclick="showPage('cross')">Kreuzung</button>
+    <button onclick="showPage('journal')">Journal</button>
+  </nav>
+</header>
+
+<main>
+
+<div class="progress no-print">
+  <div id="progressBar"></div>
+</div>
+<p class="note no-print" id="progressText">Dein Forschungsfortschritt: 0 %</p>
+
+<!-- START -->
+<section id="start" class="active">
+
+<div class="hero">
+  <p>VIRTUELLES BIOLOGIE-LABOR · KLASSE 9</p>
+  <h1>Das Geheimnis der Erbsen</h1>
+  <h2>Wie werden Merkmale vererbt?</h2>
+  <p>Willkommen im Forschungslabor! Untersuche Erbsenpflanzen, führe eigene Kreuzungsversuche durch und entdecke die erste Mendelsche Regel.</p>
+  <button onclick="showPage('plant')">🧪 Forschung starten</button>
+</div>
+
+<div class="mendel">
+  <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Gregor_Mendel.png"
+       alt="Historisches Porträt von Gregor Mendel">
+  <div class="speech">
+    <strong>GREGOR MENDEL · FORSCHUNGSLEITER</strong>
+    „Willkommen! Ich bin Gregor Mendel. Im 19. Jahrhundert untersuchte ich, wie Merkmale von Pflanzen an ihre Nachkommen weitergegeben werden. Heute führt ihr meine Forschung weiter!“
+  </div>
+</div>
+
+<div class="panel">
+  <h2>Dein Forschungsauftrag</h2>
+  <ol>
+    <li>Lerne die Erbsenpflanze kennen.</li>
+    <li>Untersuche den Aufbau ihrer Blüte.</li>
+    <li>Beobachte, wie Pollen übertragen werden können.</li>
+    <li>Führe zwei Kreuzungsversuche durch.</li>
+    <li>Formuliere die erste Mendelsche Regel.</li>
+  </ol>
+</div>
+
+<div class="question">
+  <strong>Deine erste Forschungsfrage:</strong>
+  <p>Was glaubst du: Wenn man eine violett blühende Erbsenpflanze mit einer weiß blühenden Erbsenpflanze kreuzt – welche Blütenfarbe haben die Nachkommen?</p>
+  <textarea id="firstIdea" placeholder="Meine Vermutung ist ..."></textarea>
+</div>
+
+</section>
+
+<!-- PFLANZE -->
+<section id="plant">
+
+<h1>01 · Das Forschungsobjekt</h1>
+<h2>Die Erbsenpflanze</h2>
+
+<div class="panel grid">
+  <div>
+    <img class="photo"
+      src="https://commons.wikimedia.org/wiki/Special:FilePath/Pisum_sativum_J1.JPG"
+      alt="Erbsenpflanze auf einem Feld">
+    <p class="note">Erbsenpflanze (Pisum sativum). Foto: Jamain / Wikimedia Commons, CC BY-SA 3.0.</p>
+  </div>
+  <div>
+    <h3>Warum untersuchte Mendel Erbsen?</h3>
+    <ul>
+      <li>Sie lassen sich relativ einfach anbauen.</li>
+      <li>Sie besitzen gut erkennbare Merkmale.</li>
+      <li>Sie bilden viele Samen.</li>
+      <li>Ihre Bestäubung lässt sich gezielt beeinflussen.</li>
+      <li>Es gibt unterschiedliche, klar erkennbare Varianten, zum Beispiel violette und weiße Blüten.</li>
+    </ul>
+  </div>
+</div>
+
+<div class="mendel">
+  <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Gregor_Mendel.png"
+       alt="Gregor Mendel">
+  <div class="speech">
+    <strong>MENDEL:</strong>
+    „Für meine Versuche wählte ich Pflanzen mit klar unterscheidbaren Merkmalen. So konnte ich die Ergebnisse gut vergleichen.“
+  </div>
+</div>
+
+<div class="question">
+  <strong>Deine Aufgabe:</strong>
+  <p>Warum ist es für einen Forschungsversuch sinnvoll, Pflanzen mit gut unterscheidbaren Merkmalen zu verwenden?</p>
+  <textarea id="plantAnswer" placeholder="Ich denke, das ist sinnvoll, weil ..."></textarea>
+</div>
+
+<button onclick="showPage('flower')">Weiter zur Blütenuntersuchung →</button>
+</section>
+
+<!-- BLÜTE -->
+<section id="flower">
+
+<h1>02 · Das Blütenlabor</h1>
+<h2>Wie ist eine Erbsenblüte aufgebaut?</h2>
+
+<div class="panel">
+  <p>Untersuche das vereinfachte Modell einer Erbsenblüte. Entferne die Blütenblätter mit dem Button. So kannst du die inneren Blütenorgane besser erkennen.</p>
+
+  <div class="flower-area">
+    <div class="flower" id="flowerModel">
+      <div class="petal"></div>
+      <div class="petal"></div>
+      <div class="petal"></div>
+      <div class="petal"></div>
+      <div class="stamen"></div>
+      <div class="stamen"></div>
+      <div class="stamen"></div>
+      <div class="stamen"></div>
+      <div class="pistil"></div>
+    </div>
+
+    <button onclick="removePetals()">🌸 Blütenblätter entfernen</button>
+    <button class="secondary" onclick="resetFlower()">Zurücksetzen</button>
+  </div>
+
+  <p><strong>Beobachtung:</strong> Die Erbsenblüte besitzt männliche und weibliche Blütenorgane.</p>
+</div>
+
+<div class="grid">
+  <div class="panel">
+    <h3>Staubblätter</h3>
+    <p>Die Staubblätter bilden den Pollen. Pollen enthält die männlichen Keimzellen.</p>
+  </div>
+  <div class="panel">
+    <h3>Stempel</h3>
+    <p>Der Stempel ist das weibliche Blütenorgan. Seine Spitze heißt Narbe. Dort kann Pollen landen.</p>
+  </div>
+  <div class="panel">
+    <h3>Blütenblätter</h3>
+    <p>Sie schützen die inneren Blütenorgane und können Bestäuber anlocken.</p>
+  </div>
+</div>
+
+<div class="question">
+  <strong>Forscherfrage:</strong>
+  <p>Warum kann eine Erbsenpflanze sich häufig selbst bestäuben?</p>
+  <textarea id="flowerAnswer" placeholder="Ich vermute ..."></textarea>
+</div>
+
+<div class="mendel">
+  <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Gregor_Mendel.png" alt="Gregor Mendel">
+  <div class="speech">
+    <strong>MENDEL:</strong>
+    „Bei Erbsen liegen die männlichen und weiblichen Blütenorgane nah beieinander. Das begünstigt die Selbstbestäubung. Für meine Kreuzungsversuche musste ich die Bestäubung gezielt kontrollieren.“
+  </div>
+</div>
+
+<button onclick="showPage('wind')">Weiter zur Windsimulation →</button>
+</section>
+
+<!-- WIND -->
+<section id="wind">
+
+<h1>03 · Das Windlabor</h1>
+<h2>Wie können Pollenkörner bewegt werden?</h2>
+
+<div class="panel">
+  <p>Pollen kann auf unterschiedliche Weise verbreitet werden. In dieser Simulation beobachtest du, wie Luftbewegungen kleine Pollenkörner transportieren können.</p>
+
+  <div class="wind-box">
+    <div class="pollen"></div>
+    <div class="pollen"></div>
+    <div class="pollen"></div>
+  </div>
+
+  <p>Beobachte die Bewegung der gelben Punkte. Sie stehen symbolisch für Pollenkörner.</p>
+  <button onclick="toggleWind()" id="windButton">⏸ Wind anhalten</button>
+</div>
+
+<div class="panel">
+  <h3>Was bedeutet das für die Erbsenblüte?</h3>
+  <p>Obwohl die Blütenstruktur der Erbse Selbstbestäubung begünstigt, kann fremder Pollen unter bestimmten Umständen ebenfalls auf eine Narbe gelangen. Für gezielte Kreuzungsversuche muss man deshalb die Bestäubung kontrollieren.</p>
+</div>
+
+<div class="question">
+  <strong>Deine Aufgabe:</strong>
+  <p>Warum musste Mendel bei seinen Kreuzungsversuchen verhindern, dass eine Blüte unkontrolliert mit eigenem oder fremdem Pollen bestäubt wird?</p>
+  <textarea id="windAnswer" placeholder="Damit ..."></textarea>
+</div>
+
+<button onclick="showPage('cross')">Weiter ins Kreuzungslabor →</button>
+</section>
+
+<!-- KREUZUNG -->
+<section id="cross">
+
+<h1>04 · Das Kreuzungslabor</h1>
+<h2>Dein erster Kreuzungsversuch</h2>
+
+<div class="mendel">
+  <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Gregor_Mendel.png" alt="Gregor Mendel">
+  <div class="speech">
+    <strong>MENDEL:</strong>
+    „Jetzt wird experimentiert! Wir kreuzen zwei reinerbige Erbsenpflanzen mit unterschiedlichen Blütenfarben. Achtet genau auf die Ergebnisse.“
+  </div>
+</div>
+
+<div class="panel">
+  <h3>Wähle deinen Kreuzungsversuch</h3>
+
+  <label for="mother">Empfängerpflanze (Blüte):</label>
+  <select id="mother">
+    <option value="white">Weiße Blüte</option>
+    <option value="violet">Violette Blüte</option>
+  </select>
+
+  <label for="father">Pollen stammt von:</label>
+  <select id="father">
+    <option value="violet">Violetter Blüte</option>
+    <option value="white">Weißer Blüte</option>
+  </select>
+
+  <div class="cross-result">
+    <div class="plant">
+      <span class="flower-icon" id="motherIcon">⚪</span>
+      <strong>Empfängerblüte</strong>
+    </div>
+    <div style="font-size:2rem">←</div>
+    <div class="plant">
+      <span class="flower-icon" id="fatherIcon">🟣</span>
+      <strong>Pollenquelle</strong>
+    </div>
+  </div>
+
+  <button onclick="updateCross()">Kreuzung vorbereiten</button>
+  <button onclick="runCross()">🧬 Kreuzung durchführen</button>
+
+  <div id="crossOutput" class="question">
+    Wähle deine Pflanzen aus und starte den Versuch.
+  </div>
+</div>
+
+<div class="panel">
+  <h3>Vorhersage vor dem Versuch</h3>
+  <p>Welche Blütenfarbe erwartest du bei den Nachkommen?</p>
+  <select id="prediction">
+    <option value="">Bitte auswählen ...</option>
+    <option>Alle Nachkommen sind violett.</option>
+    <option>Alle Nachkommen sind weiß.</option>
+    <option>Es gibt violette und weiße Nachkommen.</option>
+  </select>
+  <textarea id="predictionReason" placeholder="Ich vermute das, weil ..."></textarea>
+</div>
+
+<div class="panel">
+  <h3>Vergleich: Was passiert bei der umgekehrten Kreuzung?</h3>
+  <p>Vertausche die Pflanzen: Verwende diesmal die weiße Blüte als Pollenquelle und die violette Blüte als Empfängerin.</p>
+  <button onclick="reverseCross()">Pflanzen vertauschen</button>
+  <p id="reverseInfo"></p>
+</div>
+
+<div class="question">
+  <strong>Vergleichsfrage:</strong>
+  <p>Unterscheiden sich die Ergebnisse der beiden Kreuzungsrichtungen?</p>
+  <textarea id="comparisonAnswer" placeholder="Beim Vergleich fällt mir auf ..."></textarea>
+</div>
+
+<button onclick="showPage('rule')">Ergebnisse auswerten →</button>
+</section>
+
+<!-- REGEL -->
+<section id="rule">
+
+<h1>05 · Die Auswertung</h1>
+<h2>Was zeigen unsere Kreuzungsversuche?</h2>
+
+<div class="panel">
+  <h3>Die Ausgangsgeneration: P</h3>
+  <p>Die Elterngeneration besteht in unserem Modell aus zwei reinerbigen Pflanzen:</p>
+
+  <div class="cross-result">
+    <div class="plant">
+      <span class="flower-icon">🟣</span>
+      <strong>VV</strong>
+      <small>Violett</small>
+    </div>
+    <strong>×</strong>
+    <div class="plant">
+      <span class="flower-icon">⚪</span>
+      <strong>vv</strong>
+      <small>Weiß</small>
+    </div>
+  </div>
+
+  <p><strong>V</strong> steht für das dominante Allel für violette Blütenfarbe.</p>
+  <p><strong>v</strong> steht für das rezessive Allel für weiße Blütenfarbe.</p>
+</div>
+
+<div class="panel">
+  <h3>Die erste Tochtergeneration: F1</h3>
+  <p>Jede Nachkommenpflanze erhält ein Allel von jeder Elternpflanze:</p>
+
+  <div class="generation">
+    <div class="seed">Vv<br>🟣</div>
+    <div class="seed">Vv<br>🟣</div>
+    <div class="seed">Vv<br>🟣</div>
+    <div class="seed">Vv<br>🟣</div>
+  </div>
+
+  <p>Alle Nachkommen besitzen in diesem Modell die Kombination Vv. Da V dominant ist, blühen alle Pflanzen violett.</p>
+</div>
+
+<div class="mendel">
+  <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Gregor_Mendel.png" alt="Gregor Mendel">
+  <div class="speech">
+    <strong>MENDEL:</strong>
+    „Das ist ein bemerkenswertes Ergebnis: Die Nachkommen der ersten Generation sehen bezüglich dieses Merkmals gleich aus!“
+  </div>
+</div>
+
+<div class="panel">
+  <h2>Die 1. Mendelsche Regel</h2>
+  <h3>Uniformitätsregel</h3>
+  <p>Kreuzt man zwei reinerbige Individuen einer Art, die sich in einem Merkmal unterscheiden, sind die Nachkommen der ersten Tochtergeneration (F1) unter den betrachteten Bedingungen untereinander gleich (uniform).</p>
+  <p>In unserem Beispiel sind alle Pflanzen der F1-Generation violett blühend.</p>
+</div>
+
+<div class="question">
+  <strong>Teste dein Wissen:</strong>
+  <p>Wie nennt man die Elterngeneration?</p>
+  <button class="secondary" onclick="checkQuiz('P')">P-Generation</button>
+  <button class="secondary" onclick="checkQuiz('F1')">F1-Generation</button>
+  <p id="quizResult"></p>
+
+  <p>Wie nennt man die erste Tochtergeneration?</p>
+  <button class="secondary" onclick="checkQuiz('F1')">F1-Generation</button>
+  <button class="secondary" onclick="checkQuiz('P')">P-Generation</button>
+  <p id="quizResult2"></p>
+</div>
+
+<button onclick="showPage('journal')">Zum Forschungsjournal →</button>
+</section>
+
+<!-- JOURNAL -->
+<section id="journal">
+
+<h1>06 · Dein Forschungsjournal</h1>
+<h2>Dokumentiere deine Entdeckungen</h2>
+
+<div class="panel">
+  <p>Trage deine Antworten ein. Du kannst dein Forschungsjournal anschließend über die Druckfunktion speichern oder ausdrucken.</p>
+
+  <label>Name / Forscherteam</label>
+  <input id="studentName" placeholder="Name eintragen">
+
+  <label>1. Warum eignet sich die Erbsenpflanze für Mendels Versuche?</label>
+  <textarea id="journal1" placeholder="Meine Antwort ..."></textarea>
+
+  <label>2. Welche Blütenorgane hast du untersucht?</label>
+  <textarea id="journal2" placeholder="Meine Antwort ..."></textarea>
+
+  <label>3. Was begünstigt die Selbstbestäubung bei der Erbsenblüte?</label>
+  <textarea id="journal3" placeholder="Meine Antwort ..."></textarea>
+
+  <label>4. Was war deine Vorhersage für die Kreuzung?</label>
+  <textarea id="journal4" placeholder="Meine Vorhersage ..."></textarea>
+
+  <label>5. Was hast du bei den beiden Kreuzungsrichtungen beobachtet?</label>
+  <textarea id="journal5" placeholder="Meine Beobachtung ..."></textarea>
+
+  <label>6. Formuliere die 1. Mendelsche Regel in eigenen Worten.</label>
+  <textarea id="journal6" placeholder="Die Uniformitätsregel besagt ..."></textarea>
+
+  <label>7. Was bedeutet P-Generation?</label>
+  <textarea id="journal7" placeholder="Die P-Generation ist ..."></textarea>
+
+  <label>8. Was bedeutet F1-Generation?</label>
+  <textarea id="journal8" placeholder="Die F1-Generation ist ..."></textarea>
+</div>
+
+<div class="panel">
+  <h2>Forschung abgeschlossen!</h2>
+  <p>Du hast die Erbsenpflanze untersucht, Kreuzungsversuche durchgeführt und die Uniformitätsregel kennengelernt.</p>
+  <button onclick="window.print()">🖨️ Journal drucken / als PDF speichern</button>
+  <button class="secondary" onclick="saveJournal()">💾 Antworten zwischenspeichern</button>
+  <p id="saveMessage" class="note"></p>
+</div>
+
+</section>
+
+</main>
+
+<footer>
+  <p>🔬 Mendels Forschungslabor · Biologie Klasse 9</p>
+  <p>Ein digitales Lernprojekt zur 1. Mendelschen Regel</p>
+  <p class="note" style="color:white">
+    Bildnachweise: Gregor Mendel.png – Wikimedia Commons, Public Domain Mark 1.0.
+    Pisum sativum J1.JPG – Jamain, Wikimedia Commons, CC BY-SA 3.0.
+  </p>
+</footer>
+
+<script>
+let completed = new Set();
+let windRunning = true;
+
+function showPage(id) {
+  document.querySelectorAll("main section").forEach(section => {
+    section.classList.remove("active");
+  });
+
+  document.getElementById(id).classList.add("active");
+
+  completed.add(id);
+  updateProgress();
+
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function updateProgress() {
+  const total = 7;
+  const percent = Math.round(completed.size / total * 100);
+  document.getElementById("progressBar").style.width = percent + "%";
+  document.getElementById("progressText").textContent =
+    "Dein Forschungsfortschritt: " + percent + " %";
+}
+
+function removePetals() {
+  document.querySelectorAll(".petal").forEach(petal => {
+    petal.classList.add("hidden");
+  });
+}
+
+function resetFlower() {
+  document.querySelectorAll(".petal").forEach(petal => {
+    petal.classList.remove("hidden");
+  });
+}
+
+function toggleWind() {
+  windRunning = !windRunning;
+
+  document.querySelectorAll(".pollen").forEach(particle => {
+    particle.style.animationPlayState = windRunning ? "running" : "paused";
+  });
+
+  document.getElementById("windButton").textContent =
+    windRunning ? "⏸ Wind anhalten" : "▶ Wind starten";
+}
+
+function updateCross() {
+  const mother = document.getElementById("mother").value;
+  const father = document.getElementById("father").value;
+
+  document.getElementById("motherIcon").textContent =
+    mother === "violet" ? "🟣" : "⚪";
+
+  document.getElementById("fatherIcon").textContent =
+    father === "violet" ? "🟣" : "⚪";
+
+  document.getElementById("crossOutput").textContent =
+    "Die Kreuzung ist vorbereitet. Überlege zuerst, welche Nachkommen du erwartest. Starte danach den Versuch.";
+}
+
+function runCross() {
+  const mother = document.getElementById("mother").value;
+  const father = document.getElementById("father").value;
+
+  const output = document.getElementById("crossOutput");
+
+  if (mother === father) {
+    output.innerHTML =
+      "<strong>Hinweis:</strong> Du hast zwei Pflanzen mit derselben Blütenfarbe ausgewählt. Für den Versuch zur Uniformitätsregel benötigst du eine reinerbige violette und eine reinerbige weiße Pflanze.";
+    return;
+  }
+
+  output.innerHTML = `
+    <h3>Versuch durchgeführt!</h3>
+    <p>Die Elternpflanzen sind reinerbig: VV × vv.</p>
+    <p>Alle Nachkommen erhalten die Allelkombination Vv.</p>
+    <div class="generation">
+      <div class="seed">Vv 🟣</div>
+      <div class="seed">Vv 🟣</div>
+      <div class="seed">Vv 🟣</div>
+      <div class="seed">Vv 🟣</div>
+    </div>
+    <strong>Ergebnis: Alle Nachkommen der F1-Generation blühen violett.</strong>
+    <p>Die Kreuzungsrichtung ändert das Ergebnis in diesem vereinfachten Modell nicht.</p>
+  `;
+}
+
+function reverseCross() {
+  const mother = document.getElementById("mother");
+  const father = document.getElementById("father");
+
+  const oldMother = mother.value;
+  mother.value = father.value;
+  father.value = oldMother;
+
+  updateCross();
+
+  document.getElementById("reverseInfo").textContent =
+    "Die Pflanzen wurden vertauscht. Führe jetzt die Kreuzung erneut durch und vergleiche das Ergebnis.";
+}
+
+function checkQuiz(answer) {
+  const correct = answer === "P";
+
+  // Die Buttons werden getrennt ausgewertet.
+  const buttons = event.currentTarget;
+  const result = buttons.parentElement.querySelector(
+    buttons.textContent.includes("F1") ? "#quizResult2" : "#quizResult"
+  );
+
+  if (result) {
+    result.textContent = correct
+      ? "Richtig! Die P-Generation ist die Elterngeneration."
+      : "Noch nicht ganz. Überlege noch einmal!";
+  }
+}
+
+function saveJournal() {
+  const fields = document.querySelectorAll(
+    "#journal input, #journal textarea"
+  );
+
+  const data = {};
+
+  fields.forEach(field => {
+    data[field.id] = field.value;
+  });
+
+  try {
+    localStorage.setItem("mendelJournal", JSON.stringify(data));
+    document.getElementById("saveMessage").textContent =
+      "Deine Antworten wurden auf diesem Gerät gespeichert.";
+  } catch (error) {
+    document.getElementById("saveMessage").textContent =
+      "Das Speichern ist in diesem Browser nicht verfügbar. Nutze stattdessen die Druckfunktion.";
+  }
+}
+
+function loadJournal() {
+  try {
+    const saved = JSON.parse(
+      localStorage.getItem("mendelJournal") || "{}"
+    );
+
+    Object.keys(saved).forEach(id => {
+      const field = document.getElementById(id);
+      if (field) field.value = saved[id];
+    });
+  } catch (error) {
+    console.log("Keine gespeicherten Antworten gefunden.");
+  }
+}
+
+document.getElementById("mother").addEventListener("change", updateCross);
+document.getElementById("father").addEventListener("change", updateCross);
+
+loadJournal();
+updateProgress();
+</script>
+
+</body>
+</html>

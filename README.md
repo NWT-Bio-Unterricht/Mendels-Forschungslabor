@@ -1,1 +1,1 @@
-# Mendelsche-Regeln-1
+# Mendels Forschungslabor

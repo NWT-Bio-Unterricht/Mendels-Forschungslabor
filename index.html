@@ -125,13 +125,13 @@ footer .note{color:#fff}
   <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Gregor_Mendel.png" alt="Historisches Porträt von Gregor Mendel">
   <div><strong>👨‍🔬 Gregor Mendel</strong>„Willkommen in meinem Labor und in meinem Klostergarten! Ich bin Gregor Mendel, Mönch und leidenschaftlicher Gärtner. Seit Jahren ziehe ich leckere Erbsen heran und schreibe auf, wie ihre Nachkommen aussehen. Manche gleichen ihren Eltern, andere überhaupt nicht. Ist das reiner Zufall – oder steckt eine Ordnung dahinter?<br><br>Ich kann das nicht allein herausfinden. <b>Du wirst heute mein Assistent!</b> Du lernst die nötigen Wörter, erforschst meine Erbsen, führst meine Kreuzung selbst durch und suchst mit mir die Regel dahinter. Schreibe deine Ergebnisse in dein <b>Forschertagebuch</b> (dein Arbeitsblatt).“</div>
  </div>
-  <div class="panel"><h1>Unsere heutige Forschungsfrage: Welche Blütenfarbe haben die Nachkommen, wenn man eine Erbsenpflanze mit violetten Blüten mit einer Erbsenpflanze mit weißen Blüten kreuzt? Und woran liegt das?🤔</h1>
+  <div class="panel"><h2>Unsere heutige Forschungsfrage: Welche Blütenfarbe haben die Nachkommen, wenn man eine Erbsenpflanze mit violetten Blüten mit einer Erbsenpflanze mit weißen Blüten kreuzt? Und woran liegt das?🤔📝 Notiere deine Vermutung in deinem Forschertagebuch (Arbeitsblatt).</h2>
  <div class="panel"><h2>🗺️ Unser Weg in drei Stationen</h2>
   <div class="grid">
    <div class="card"><b>📜 Station 1</b>Mein Studierzimmer: Hier lernst du die Wörter der Vererbung (Merkmal, Gen, Genotyp, Phänotyp).</div>
    <div class="card"><b>🌱 Station 2</b>Mein Klostergarten: Wir erforschen die Erbse und führen die Kreuzung durch.</div>
    <div class="card"><b>🏆 Station 3</b>Meine Auswertung: Wir erklären das Ergebnis, erstellen ein Kreuzungsschema und entdecken die Regel.</div></div></div>
- <div class="task" style="border-left-color:var(--pu);background:#f4ecfb">🔬 <b>Meine Forschungsfrage an dich:</b><br>Bei der Meiose entsteht zufällige Vielfalt. Wie sehen dann die Nachkommen aus, wenn man eine Erbsenpflanze mit lila Blüten mit einer Erbsenpflanze mit weißen Blüten kreuzt? Beide Pflanzen sind <b>reinerbig</b>, das heißt: Bei Selbstbestäubung bringen sie immer wieder Pflanzen mit derselben Blütenfarbe hervor. Gibt es bei den Nachkommen Vielfalt, oder sehen alle gleich aus?<br><span class="paper">📝 Notiere deine Vermutung in deinem Forschertagebuch (Arbeitsblatt).</span></div>
+
  <button data-go="genes1">📜 Zu Station 1: Mendels Studierzimmer</button>
 </section>
 
@@ -171,7 +171,8 @@ footer .note{color:#fff}
   <img class="photo" src="zwillinge.jpg" onerror="imgFB(this)" alt="Eineiige Zwillinge"><div class="nopic" </div>
   <p>Eineiige Zwillinge sind aus <b>einer</b> befruchteten Eizelle entstanden. Sie haben dieselben Gene.</p>
   <div class="task" style="border-left-color:var(--pu);background:#f4ecfb">❓ <b>Frage:</b> Warum sehen eineiige Zwillinge trotzdem nicht genau gleich aus, obwohl ihre Gene gleich sind?<br><span class="paper">📝 Notiere deine Vermutung in deinem Forschertagebuch (Arbeitsblatt).</span></div>
-  <p>Die Antwort liegt in zwei Begriffen:</p>
+   <div id="g2" hidden>
+    <p>Die Antwort liegt in zwei Begriffen:</p>
   <p><span class="chip">Genotyp</span> Die Allelkombination eines Lebewesens, also alle Allele für ein Gen, z. B. ein Allel für lila und ein Allel für weiß.</p>
   <p><span class="chip">Phänotyp</span> Alle sichtbaren oder messbaren Merkmale, z. B. <b>lila Blüten</b>. Er entsteht aus dem Genotyp <b>und</b> der Umwelt:</p>
   <p style="text-align:center;font-size:1.25rem"><b>Genotyp + Umwelt ➜ Phänotyp</b></p>
@@ -236,14 +237,14 @@ footer .note{color:#fff}
   <h3>Was ist Bestäubung?</h3>
   <p>Bei der <b>Bestäubung</b> gelangt Pollen auf die Narbe eines Stempels. Sie sit vergleichbar mit der Befruchtung einer Eizelle. Durch eine Bestäubung können die Samenanlagen zu Samen ausreifen und neue Pflanzen bilden. es gibt verschiedene Arten von Bestäubungen:</p>
   <div class="grid">
-   <div class="card"><b>🔁 Selbstbestäubung</b>Der Pollen stammt aus <b>derselben Blüte</b> (oder derselben Pflanze). Das ist bei Erbsenpflanzen <b>der Normalfall,</b> weil die Blüte so eng um die Staubblätter und die Blüte geschlossen ist, dass Staubblätter und Narbe dicht beieinander liegen und die Staubblätter dann die Nabe bestäuben.</div>
+   <div class="card"><b>🔁 Selbstbestäubung</b>Der Pollen stammt aus <b>derselben Blüte</b> (oder derselben Pflanze). Das ist bei Erbsenpflanzen <b>der Normalfall,</b> weil die Blüte so eng um die Staubblätter und die Blüte geschlossen ist, dass Staubblätter und Narbe dicht beieinander liegen und die Staubblätter dann die Nabe bestäuben. Die Merkmale bleiben bei Selbstbestäubung immer gleich, die entstehnde Erbsenpflanze ist <b>reinerbig</b>, auch <b>homozygot</b>genannt.</div>
    <div class="card"><b>🔀 Fremdbestäubung</b>Pollen von <b>einer anderen Pflanze</b> gelangt auf die Narbe. Beispielsweise durch Insekten oder Wind. Bei der Erbsenpflanze ist das selten.</div>
   </div>
  </div>
  <div class="panel"><h3>🧐 Warum ist das für Mendels Versuche wichtig?</h3>
-  <p>Mendel wollte <b>genau bestimmen</b>, welche zwei Pflanzen Nachkommen bekommen. Würde sich die Empfängerblüte selbst bestäuben oder fremden Pollen bekommen, wäre das Ergebnis nicht mehr eindeutig.</p>
+  <p>Mendel wollte <b>genau bestimmen</b>, welche zwei Pflanzen welche Nachkommen bekommen. Würde sich die Empfängerblüte selbst bestäuben oder fremden Pollen bekommen, wäre das Ergebnis nicht mehr eindeutig.</p>
   <p>Deshalb musste er die Bestäubung <b>kontrollieren</b>:
-    <b> 1.Er öffnete die Blüten früh</b> <b> 2. Er entfernt die Staubblätter der Empfängerblüte</b> <b>3. Er entfernte die Staubblätter</b> <b> 4. Er übertrug dann mit einem Pinsel gezielt Pollen einer anderen Pflanze.</b> Das nennt man <b>künstliche Bestäubung</b>. <b>Mendel ist bei seinen Kreuzungsversuchen genau so vorgegangen.</b></p>
+    <b> Er öffnete die Blüten früh, entfernt die Staubblätter der Empfängerblüte und übertrug darauf mti einem Pinsel die Pollen der Spenderblüte auf die Nabe der Empfängerblüte.</b> Das nennt man <b>künstliche Bestäubung</b>. </p>
   <p>👉 Genau das machst du jetzt im Kreuzungsspiel!</p></div>
  <div class="task">❓ <b>Mendel fragt:</b> Warum muss man bei einem Kreuzungsversuch verhindern, dass sich die Empfängerblüte selbst bestäubt?<br><span class="paper">📝 Notiere deine Antwort in deinem Forschertagebuch (Arbeitsblatt).</span></div>
  <button data-go="game">Weiter zum Kreuzungsspiel →</button>
@@ -314,7 +315,7 @@ footer .note{color:#fff}
    <div class="v">VV</div><div class="v">🟣 lila</div><div class="v">V ist dominant</div>
    <div class="v">Vv</div><div class="v">🟣 lila</div><div class="v">V überdeckt v</div>
    <div class="w">vv</div><div>⚪ weiß</div><div class="w">nur v vorhanden</div></div>
-  <div class="card" style="background:#fff6dd">👉 <b>Wichtig:</b> Eine <b>weiße</b> Erbsenblüte hat immer den Genotyp <b>vv</b>. Eine reinerbig <b>lila</b> Erbsenblüte hat den Genotyp <b>VV</b>. Genau diese beiden Pflanzen hast du im Spiel gekreuzt.</div>
+  <div class="card" style="background:#fff6dd">👉 <b>Wichtig:</b> Eine <b>weiße</b> Erbsenblüte hat immer den Genotyp <b>vv.</b> Eine reinerbig <b>lila</b> Erbsenblüte hat den Genotyp <b>VV.</b> Genau diese beiden Pflanzen hast du im Spiel gekreuzt.</div>
   <p class="note">⚠️ Das ist ein Modell für die Erbsenblütenfarbe. Die meisten Merkmale des Menschen werden nicht so einfach vererbt.</p></div>
  <div class="task" style="border-left-color:var(--pu);background:#f4ecfb">🔬 <b>Forscherfrage – erst selbst denken!</b> Warum könnten alle Nachkommen lila Blüten haben, obwohl ein Elternteil weiß blühte? Welche Information könnte die lila Pflanze weitergegeben haben? Begründe deine Vermutung mit eigenen Worten.<br><br>Alle Nachkommen im Spiel haben lila geblüht. Welche Allelkombination (welchen Genotyp) vermutest du bei ihnen?<br><span class="paper">📝 Notiere deine Vermutung in deinem Forschertagebuch (Arbeitsblatt).</span></div>
  <div class="q" id="qG"></div>
